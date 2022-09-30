@@ -1,4 +1,4 @@
-## Laboratorio 2 : Paradigma Lógico con Prolog
+## Laboratorio 2: Paradigma Lógico con Prolog
 
 ### Enunciado
 
@@ -42,7 +42,7 @@ Por lo que podemos identificar algunas funcionalidades
 
 ### TDAs
 
-Con el analisis del enenunciado se concluye que el juego Dobble contiene:
+Con el analisis del enunciado se concluye que el proyecto contiene:
 
 1. TDA image, contiene todas las caractericas de una imagen.
 2. TDA pixbit
