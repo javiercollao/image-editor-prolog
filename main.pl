@@ -7,15 +7,18 @@
 %
 
 %  Dominios
-%  IdSimbolo    : Integer
-%  Simbolo      : String 
+%  posX    : Integer
+%  posY    : Integer 
+%  bit     : Integer [0|1]
+%  depth   : Integer
 %  Predicados
+%  pixbit(posX, posY, bit, depth) aridad=4
 %  Metas Primarias
-%  getSimbolo
+%  pixbit(posX, posY, bit, depth)
 %  Metas Secundarias 
 %  Clausulas
 
-
+pixbit(posX, posY, bit, depth)
 
 % --------------------------------------------------------------------------
 %  @title      TDA pixhex-d
