@@ -1,4 +1,18 @@
 % --------------------------------------------------------------------------
+%  @title      TDA lista
+%  @author     Javier Collao
+%
+%  @desc       Este TDA representa lista 
+%
+
+
+% member()
+% es map
+% call()
+ 
+
+
+% --------------------------------------------------------------------------
 %  @title      TDA pixbit-d
 %  @author     Javier Collao
 %
@@ -7,18 +21,18 @@
 %
 
 %  Dominios
-%  posX    : Integer
-%  posY    : Integer 
-%  bit     : Integer [0|1]
-%  depth   : Integer
-%  Predicados
-%  pixbit(posX, posY, bit, depth) aridad=4
-%  Metas Primarias
-%  pixbit(posX, posY, bit, depth)
-%  Metas Secundarias 
+%  PosX    : Integer
+%  PosY    : Integer 
+%  Bit     : Integer [0|1]
+%  Depth   : Integer
+
+%  Predicados: 
+%   pixbit(PosX, PosY, Bit, Depth, PixbitList) aridad = 4
+%  Metas Primarias: pixbit
+%  Metas Secundarias: NA
 %  Clausulas
 
-pixbit(posX, posY, bit, depth)
+pixbit(PosX, PosY, Bit, Depth, [PosX, PosY, Bit, Depth]).
 
 % --------------------------------------------------------------------------
 %  @title      TDA pixhex-d
@@ -33,10 +47,12 @@ pixbit(posX, posY, bit, depth)
 %  Simbolo      : String 
 %  Predicados
 %  Metas Primarias
-%  getSimbolo
 %  Metas Secundarias 
-%  Clausulas
 
+
+pixhex(PosX, PosY, Hex, Depth, [PosX, PosY, Hex, Depth]).
+
+%  Clausulas
 
 % --------------------------------------------------------------------------
 %  @title      TDA pixrgb-d
@@ -50,11 +66,11 @@ pixbit(posX, posY, bit, depth)
 %  IdSimbolo    : Integer
 %  Simbolo      : String 
 %  Predicados
-%  Metas Primarias
-%  getSimbolo
-%  Metas Secundarias 
+%  Metas Primarias 
+%  Metas Secundarias  
 %  Clausulas
 
+pixrgb(PosX, PosY, R, G, B, Depth, [PosX, PosY, R, G, B, Depth]).
 
 
 % --------------------------------------------------------------------------
@@ -75,3 +91,5 @@ pixbit(posX, posY, bit, depth)
 %  getSimbolo
 %  Metas Secundarias 
 %  Clausulas
+
+image(Width, Height, Pixels, [Width, Height, Pixels])
