@@ -136,6 +136,23 @@ imageIsBitmap(Image):-
     pixelsAreBitmap(Pixels).
 
 % imageIsPixmap
+
+
+pixelIsPixrgb(Pixel):-
+    pixrgb(_,_,R,G,B,_,Pixel),
+    R =< 255, R >= 0,
+    G =< 255, G >= 0,
+    B =< 255, B >= 0.
+
+pixelsArePixmap([Pixel | Pixels]):-
+    pixelIsPixrgb(Pixel),
+    pixelsArePixmap(Pixels).
+
+imageIsPixmap(Image):-
+    image(_,_,Pixels,Image),
+    pixelsArePixmap(Pixels).
+
+    
 % imageIsHexmap
 % imageIsCompressed
 % imageFlipH
