@@ -52,4 +52,4 @@ Con el analisis del enunciado se concluye que el proyecto contiene:
 
 ### Software
 
-Para este proyecto es necesario utilizar SWI Prolog.
+Para este proyecto es necesario utilizar [SWI Prolog](https://www.swi-prolog.org/pldoc/man?section=typetest). 
