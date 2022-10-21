@@ -209,13 +209,13 @@ pixelFlipHrgb(Width, PixelIn, PixelOut):-
     pixrgb(NewX, PosY, R, G, B, Depth, PixelOut).
 
 pixelFlipHhex(Width, PixelIn, PixelOut):-
-    pixbit(PosX, PosY, Hex, Depth, PixelIn),
+    pixhex(PosX, PosY, Hex, Depth, PixelIn),
     W is Width-1,
     (   PosX = W
     ->  NewX is PosX-1
     ;	NewX is PosX+1
     ),
-    pixbit(NewX, PosY, Hex, Depth, PixelOut).
+    pixhex(NewX, PosY, Hex, Depth, PixelOut).
 
 pixelsFlipHbit(_,[],[]).
 pixelsFlipHbit(Width, [PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
@@ -245,29 +245,67 @@ imageFlipH(ImageIn, ImageOut):-
 
 
 % imageFlipV
+%  Dominios
+%  imageIn    : List
+%  imageOut	  : List
+%  Predicados
+%  imageFlipV(ImageIn, ImageOut) aridad = 2
+%  Metas Primarias: imageFlipV
+%  Metas Secundarias: image, imageIsBitmap, imageIsPixmap, pixelsFlipVbit, pixelsFlipVrgb, pixelsFlipVhex, pixelFlipVbit, pixelFlipVrgb, pixelFlipVhex, pixbit, pixrgb, pixhex
+%  Clausulas
 
-pixelFlipV(Height, PixelIn, PixelOut):-
-     pixbit(PosX, PosY, Bit, Depth, PixelIn),
-     H is Height-1,
-     (   PosY = H
-     ->  NewY is PosY-1
-     ;	 NewY is PosY+1
-     ),
-     pixbit(PosX, NewY, Bit, Depth, PixelOut).
+pixelFlipVbit(Height, PixelIn, PixelOut):-
+    pixbit(PosX, PosY, Bit, Depth, PixelIn),
+    H is Height-1,
+    (    PosY = H
+    ->   NewY is PosY-1
+    ;	 NewY is PosY+1
+    ),
+    pixbit(PosX, NewY, Bit, Depth, PixelOut).
 
- pixelsFlipV(_,[],[]).
- pixelsFlipV(Height, [PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
-     pixelFlipV(Height, PixelIn, PixelOut),
-     pixelsFlipV(Height, PixelsIn, PixelsOut).
+pixelFlipVrgb(Height, PixelIn, PixelOut):-
+    pixrgb(PosX, PosY, R, G, B, Depth, PixelIn),
+    H is Height-1,
+    (   PosY = H
+    ->  NewY is PosY-1
+    ;	NewY is PosY+1
+    ),
+    pixrgb(PosX, NewY, R, G, B, Depth, PixelOut).
 
- imageFlipV(ImageIn, ImageOut):-
-     image(Width, Height, PixelsIn, ImageIn),
-     pixelsFlipV(Height, PixelsIn, PixelsOut),
-     image(Width, Height,PixelsOut, ImageOut).
+pixelFlipVhex(Height, PixelIn, PixelOut):-
+    pixhex(PosX, PosY, Hex, Depth, PixelIn),
+    H is Height-1,
+    (    PosY = H
+    ->   NewY is PosY-1
+    ;	 NewY is PosY+1
+    ),
+    pixhex(PosX, NewY, Hex, Depth, PixelOut).
 
+pixelsFlipVbit(_,[],[]).
+pixelsFlipVbit(Height, [PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+    pixelFlipVbit(Height, PixelIn, PixelOut),
+    pixelsFlipVbit(Height, PixelsIn, PixelsOut).
 
+pixelsFlipVrgb(_,[],[]).
+pixelsFlipVrgb(Height, [PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+    pixelFlipVrgb(Height, PixelIn, PixelOut),
+    pixelsFlipVrgb(Height, PixelsIn, PixelsOut).
 
+pixelsFlipVhex(_,[],[]).
+pixelsFlipVhex(Height, [PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+    pixelFlipVhex(Height, PixelIn, PixelOut),
+    pixelsFlipVhex(Height, PixelsIn, PixelsOut).
 
+imageFlipV(ImageIn, ImageOut):-
+    image(Width, Height, PixelsIn, ImageIn),
+    (   imageIsBitmap(ImageIn)
+    ->  pixelsFlipVbit(Height, PixelsIn, PixelsOut)
+    ;   (   imageIsPixmap(ImageIn)
+        ->  pixelsFlipVrgb(Height, PixelsIn, PixelsOut)
+        ;   pixelsFlipVhex(Height, PixelsIn, PixelsOut)
+        )
+    ),
+    image(Width, Height,PixelsOut, ImageOut).
 
 % imageCrop
 % imageRGBToHex
@@ -428,18 +466,27 @@ pixelFlipV(Height, PixelIn, PixelOut):-
 % image(3,3,[P1,P2,P3,P4,P5,P6,P7,P8,P9],Img6).
 
 
-
 % ======================================================
 %                       imageFlipH
 % ======================================================
 
-
+% pixbit(0,0,1,10,P1),
+% pixbit(0,1,0,20,P2),
+% pixbit(1,0,0,30,P3),
+% pixbit(1,1,1,4,P4),
+% image(2,2,[P1,P2,P3,P4],Img1),
+% imageFlipH(Img1,R).
 
 % ======================================================
 %                       imageFlipV
 % ======================================================
 
-
+% pixbit(0,0,1,10,P1),
+% pixbit(0,1,0,20,P2),
+% pixbit(1,0,0,30,P3),
+% pixbit(1,1,1,4,P4),
+% image(2,2,[P1,P2,P3,P4],Img1),
+% imageFlipV(Img1,R).
 
 
 
