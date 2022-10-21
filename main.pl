@@ -181,8 +181,7 @@ imageIsHexmap(Image):-
 % imageIsCompressed
 % imageFlipH
 
-
-pixelFlipH(Width, PixelIn, PixelOut):-
+pixelFlipHbit(Width, PixelIn, PixelOut):-
     pixbit(PosX, PosY, Bit, Depth, PixelIn),
     W is Width-1,
     (   PosX = W
@@ -191,14 +190,50 @@ pixelFlipH(Width, PixelIn, PixelOut):-
     ),
     pixbit(NewX, PosY, Bit, Depth, PixelOut).
 
-pixelsFlipH(_,[],[]).
-pixelsFlipH(Width, [PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
-    pixelFlipH(Width, PixelIn, PixelOut),
-    pixelsFlipH(Width, PixelsIn, PixelsOut).
+pixelFlipHrgb(Width, PixelIn, PixelOut):-
+    pixrgb(PosX, PosY, R, G, B, Depth, PixelIn),
+    W is Width-1,
+    (   PosX = W
+    ->  NewX is PosX-1
+    ;	NewX is PosX+1
+    ),
+    pixrgb(NewX, PosY, R, G, B, Depth, PixelOut).
+
+pixelFlipHhex(Width, PixelIn, PixelOut):-
+    pixbit(PosX, PosY, Hex, Depth, PixelIn),
+    W is Width-1,
+    (   PosX = W
+    ->  NewX is PosX-1
+    ;	NewX is PosX+1
+    ),
+    pixbit(NewX, PosY, Hex, Depth, PixelOut).
+
+pixelsFlipHbit(_,[],[]).
+pixelsFlipHbit(Width, [PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+    pixelFlipHbit(Width, PixelIn, PixelOut),
+    pixelsFlipHbit(Width, PixelsIn, PixelsOut).
+
+
+pixelsFlipHrgb(_,[],[]).
+pixelsFlipHrgb(Width, [PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+    pixelFlipHrgb(Width, PixelIn, PixelOut),
+    pixelsFlipHrgb(Width, PixelsIn, PixelsOut).
+
+pixelsFlipHhex(_,[],[]).
+pixelsFlipHhex(Width, [PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+    pixelFlipHhex(Width, PixelIn, PixelOut),
+    pixelsFlipHhex(Width, PixelsIn, PixelsOut).
+
 
 imageFlipH(ImageIn, ImageOut):-
     image(Width, Height, PixelsIn, ImageIn),
-    pixelsFlipH(Width, PixelsIn, PixelsOut),
+    (   imageIsBitmap(ImageIn)
+    ->  pixelsFlipHbit(Width, PixelsIn, PixelsOut)
+    ;   (   imageIsPixmap(ImageIn)
+        ->  pixelsFlipHrgb(Width, PixelsIn, PixelsOut)
+        ;   pixelsFlipHhex(Width, PixelsIn, PixelsOut)
+        )
+    ),
     image(Width, Height,PixelsOut, ImageOut).
 
 
@@ -363,4 +398,79 @@ imageFlipH(ImageIn, ImageOut):-
 
 
 
+% ======================================================
+%                       imageFlipH
+% ======================================================
+
+
+
+% ======================================================
+%                       imageFlipV
+% ======================================================
+
+
+
+
+
+
+
+
+
+
+
+% ======================================================
+%                       imageCrop
+% ======================================================
+
+
+
+% ======================================================
+%                       imageRGBToHex
+% ======================================================
+
+
+
+
+% ======================================================
+%                       imageToHistogram
+% ======================================================
+
+
+
+
+% ======================================================
+%                       imageRotate90
+% ======================================================
+
+
+
+% ======================================================
+%                       imageCompress
+% ======================================================
+
+
+
+% ======================================================
+%                      imageChangePixel
+% ======================================================
+
+
+
+
+% ======================================================
+%                       imageInvertColorRG
+% ======================================================
+
+
+
+% ======================================================
+%                       imageDepthLayers
+% ======================================================
+
+
+
+
+% ======================================================
+%                       imageDecompress
+% ======================================================
 
