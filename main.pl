@@ -180,6 +180,28 @@ imageIsHexmap(Image):-
 
 % imageIsCompressed
 % imageFlipH
+
+
+pixelFlipH(Width, PixelIn, PixelOut):-
+    pixbit(PosX, PosY, Bit, Depth, PixelIn),
+    W is Width-1,
+    (   PosX = W
+    ->  NewX is PosX-1
+    ;	NewX is PosX+1
+    ),
+    pixbit(NewX, PosY, Bit, Depth, PixelOut).
+
+pixelsFlipH(_,[],[]).
+pixelsFlipH(Width, [PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+    pixelFlipH(Width, PixelIn, PixelOut),
+    pixelsFlipH(Width, PixelsIn, PixelsOut).
+
+imageFlipH(ImageIn, ImageOut):-
+    image(Width, Height, PixelsIn, ImageIn),
+    pixelsFlipH(Width, PixelsIn, PixelsOut),
+    image(Width, Height,PixelsOut, ImageOut).
+
+
 % imageFlipV
 % imageCrop
 % imageRGBToHex
