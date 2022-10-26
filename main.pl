@@ -13,11 +13,11 @@
 
 
 % ======================================================
-%  @title      TDA pixbit-d
+%  @title      TDA pixbit
 %  @author     Javier Collao
 %
-%  @desc       Este TDA representa a la lista pixbit-d
-%  pixbit-d = x (int) X y (int) X bit ([0|1]) X depth (int)
+%  @desc       Este TDA representa a la lista pixbit
+%  pixbit = x (int) X y (int) X bit ([0|1]) X depth (int)
 %
 
 %  Dominios
@@ -35,11 +35,11 @@
 pixbit(PosX, PosY, Bit, Depth, [PosX, PosY, Bit, Depth]).
 
 % ======================================================
-%  @title      TDA pixhex-d
+%  @title      TDA pixhex
 %  @author     Javier Collao
 %
-%  @desc Este TDA representa a la lista pixhex-d
-%   pixhex-d = x (int) X y (int) X hex(String) X d (int)
+%  @desc Este TDA representa a la lista pixhex
+%   pixhex = x (int) X y (int) X hex(String) X d (int)
 %
 
 %  Dominios
@@ -57,11 +57,11 @@ pixbit(PosX, PosY, Bit, Depth, [PosX, PosY, Bit, Depth]).
 pixhex(PosX, PosY, Hex, Depth, [PosX, PosY, Hex, Depth]).
 
 % ======================================================
-%  @title      TDA pixrgb-d
+%  @title      TDA pixrgb
 %  @author     Javier Collao
 %
 %  @desc       Este TDA representa a la lista pixrgb-d
-%  pixrgb-d = x (int) X y (int) X r (C) X g (C) X b(C) X d (int)
+%  pixrgb = x (int) X y (int) X r (C) X g (C) X b(C) X d (int)
 %
 
 %  Dominios
@@ -87,7 +87,7 @@ pixrgb(PosX, PosY, R, G, B, Depth, [PosX, PosY, R, G, B, Depth]).
 %  @desc        Este TDA representa a la lista image, contiene todas las 
 %  características para las creación  de una imagen.
 %
-%  image = Width (int) X Height (int) X [pixbit-d* | pixrgb-d* | pixhex-d*]
+%  image = Width (int) X Height (int) X [pixbit* | pixrgb* | pixhex*]
 %
 
 %  Dominios
@@ -102,7 +102,6 @@ pixrgb(PosX, PosY, R, G, B, Depth, [PosX, PosY, R, G, B, Depth]).
 %  Clausulas
 
 image(Width, Height, Pixels, [Width, Height, Pixels]).
-
 
 % imageIsBitmap
 %  Dominios
@@ -152,7 +151,6 @@ imageIsPixmap(Image):-
     image(_,_,Pixels,Image),
     pixelsArePixmap(Pixels).
 
-
 % imageIsHexmap
 %  Dominios
 %  image    : List
@@ -177,8 +175,9 @@ imageIsHexmap(Image):-
     image(_,_,Pixels,Image),
     pixelsAreHexmap(Pixels).
 
-
 % imageIsCompressed
+
+
 
 % imageFlipH
 %  Dominios
@@ -190,12 +189,17 @@ imageIsHexmap(Image):-
 %  Metas Secundarias: image, imageIsBitmap, imageIsPixmap, pixelsFlipHbit, pixelsFlipHrgb, pixelsFlipHhex, pixelFlipHbit, pixelFlipHrgb, pixelFlipHhex, pixbit, pixrgb, pixhex
 %  Clausulas
 
+
+
 pixelFlipHbit(Width, PixelIn, PixelOut):-
     pixbit(PosX, PosY, Bit, Depth, PixelIn),
     W is Width-1,
     (   PosX = W
-    ->  NewX is PosX-1
-    ;	NewX is PosX+1
+    ->  NewX is 0
+    ;	 (   PosX = 0
+         ->   NewX is W
+         ;    NewX is W-PosX
+         )
     ),
     pixbit(NewX, PosY, Bit, Depth, PixelOut).
 
@@ -203,8 +207,11 @@ pixelFlipHrgb(Width, PixelIn, PixelOut):-
     pixrgb(PosX, PosY, R, G, B, Depth, PixelIn),
     W is Width-1,
     (   PosX = W
-    ->  NewX is PosX-1
-    ;	NewX is PosX+1
+    ->  NewX is 0
+    ;	 (   PosX = 0
+         ->   NewX is W
+         ;    NewX is W-PosX
+         )
     ),
     pixrgb(NewX, PosY, R, G, B, Depth, PixelOut).
 
@@ -212,8 +219,11 @@ pixelFlipHhex(Width, PixelIn, PixelOut):-
     pixhex(PosX, PosY, Hex, Depth, PixelIn),
     W is Width-1,
     (   PosX = W
-    ->  NewX is PosX-1
-    ;	NewX is PosX+1
+    ->  NewX is 0
+    ;	 (   PosX = 0
+         ->   NewX is W
+         ;    NewX is W-PosX
+         )
     ),
     pixhex(NewX, PosY, Hex, Depth, PixelOut).
 
@@ -243,7 +253,6 @@ imageFlipH(ImageIn, ImageOut):-
     ),
     image(Width, Height,PixelsOut, ImageOut).
 
-
 % imageFlipV
 %  Dominios
 %  imageIn    : List
@@ -257,9 +266,12 @@ imageFlipH(ImageIn, ImageOut):-
 pixelFlipVbit(Height, PixelIn, PixelOut):-
     pixbit(PosX, PosY, Bit, Depth, PixelIn),
     H is Height-1,
-    (    PosY = H
-    ->   NewY is PosY-1
-    ;	 NewY is PosY+1
+    (   PosY = H
+    ->  NewY is 0
+    ;	 (   PosY = 0
+         ->   NewY is H
+         ;    NewY is H-PosY
+         )
     ),
     pixbit(PosX, NewY, Bit, Depth, PixelOut).
 
@@ -267,17 +279,23 @@ pixelFlipVrgb(Height, PixelIn, PixelOut):-
     pixrgb(PosX, PosY, R, G, B, Depth, PixelIn),
     H is Height-1,
     (   PosY = H
-    ->  NewY is PosY-1
-    ;	NewY is PosY+1
+    ->  NewY is 0
+    ;	 (   PosY = 0
+         ->   NewY is H
+         ;    NewY is H-PosY
+         )
     ),
     pixrgb(PosX, NewY, R, G, B, Depth, PixelOut).
 
 pixelFlipVhex(Height, PixelIn, PixelOut):-
     pixhex(PosX, PosY, Hex, Depth, PixelIn),
     H is Height-1,
-    (    PosY = H
-    ->   NewY is PosY-1
-    ;	 NewY is PosY+1
+    (   PosY = H
+    ->  NewY is 0
+    ;	 (   PosY = 0
+         ->   NewY is H
+         ;    NewY is H-PosY
+         )
     ),
     pixhex(PosX, NewY, Hex, Depth, PixelOut).
 
@@ -308,9 +326,63 @@ imageFlipV(ImageIn, ImageOut):-
     image(Width, Height,PixelsOut, ImageOut).
 
 % imageCrop
+
+
 % imageRGBToHex
+
 % imageToHistogram
+
 % imageRotate90
+%  Dominios
+%  imageIn    : List
+%  imageOut	  : List
+%  Predicados
+%  imageRotate90(ImageIn, ImageOut) aridad = 2
+%  Metas Primarias: imageRotate90
+%  Metas Secundarias: image, imageIsBitmap, imageIsPixmap, pixelsRotate90Bit, pixelsRotate90Rgb, pixelsRotate90Hex, pixelRotate90Bit, pixelRotate90Rgb, pixelRotate90Hex, pixbit, pixrgb, pixhex
+%  Clausulas
+
+pixelRotate90Bit(PixelIn, PixelOut):-
+      pixbit(PosX, PosY, Bit, Depth, PixelIn),
+      pixbit(PosY, PosX, Bit, Depth, PixelOut).
+
+pixelsRotate90Bit([],[]).
+pixelsRotate90Bit([PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+      pixelRotate90Bit(PixelIn, PixelOut),
+      pixelsRotate90Bit(PixelsIn, PixelsOut).
+
+
+pixelRotate90Rgb(PixelIn, PixelOut):-
+      pixrgb(PosX, PosY, R,G,B, Depth, PixelIn),
+      pixrgb(PosY, PosX, R,G,B, Depth, PixelOut).
+
+pixelsRotate90Rgb([],[]).
+pixelsRotate90Rgb([PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+      pixelRotate90Rgb(PixelIn, PixelOut),
+      pixelsRotate90Rgb(PixelsIn, PixelsOut).
+
+pixelRotate90Hex(PixelIn, PixelOut):-
+      pixhex(PosX, PosY, Hex, Depth, PixelIn),
+      pixhex(PosY, PosX, Hex, Depth, PixelOut).
+
+pixelsRotate90Hex([],[]).
+pixelsRotate90Hex([PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+      pixelRotate90Hex(PixelIn, PixelOut),
+      pixelsRotate90Hex(PixelsIn, PixelsOut).
+
+
+imageRotate90(ImageIn,ImageOut):- 
+    image(Width, Height, PixelsIn, ImageIn),
+    (   imageIsBitmap(ImageIn)
+    ->  pixelsRotate90Bit(PixelsIn, PixelsOut)
+    ;   (   imageIsPixmap(ImageIn)
+        ->  pixelsRotate90Rgb(PixelsIn, PixelsOut)
+        ;   pixelsRotate90Hex(PixelsIn, PixelsOut)
+        )
+    ),
+    image(Width, Height, PixelsOut, ImageAux),
+    imageFlipH(ImageAux,ImageOut). 
+
 % imageCompress
 % imageChangePixel
 % imageInvertColorRGB
