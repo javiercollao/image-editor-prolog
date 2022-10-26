@@ -326,6 +326,69 @@ imageFlipV(ImageIn, ImageOut):-
     image(Width, Height,PixelsOut, ImageOut).
 
 % imageCrop
+%  Dominios
+%  imageIn    : List
+%  X1		  : Int
+%  Y1		  : Int
+%  X2		  : Int
+%  Y2		  : Int
+%  imageOut	  : List
+%  Predicados
+%  imageCrop(ImageIn, X1, Y1, X2, Y2, ImageOut) aridad = 6
+%  Metas Primarias: imageCrop
+%  Metas Secundarias: image, imageIsBitmap, imageIsPixmap, pixelsCropbit, pixelsCroprgb, pixelsCrophex, pixelCropbit, pixelCroprgb, pixelCrophex, pixbit, pixrgb, pixhex
+%  Clausulas
+
+pixelCropbit(X1, Y1, X2, PixelIn, PixelOut):-
+    pixbit(PosX, PosY, Bit, Depth, PixelIn),
+    (   PosX >= X1, PosX =< X2, PosY =< Y1
+    ->  pixbit(PosX, PosY, Bit, Depth, PixelOut)
+    ;	 pixbit(_, _, _, _, PixelOut)
+    ).
+   
+pixelsCropbit(_,_,_,[],[]).
+pixelsCropbit(X1, Y1, X2, [PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+    pixelCropbit(X1, Y1, X2, PixelIn, PixelOut),
+    pixelsCropbit(X1, Y1, X2, PixelsIn, PixelsOut).
+
+pixelCroprgb(X1, Y1, X2, PixelIn, PixelOut):-
+    pixrgb(PosX, PosY, R,G,B, Depth, PixelIn),
+    (   PosX >= X1, PosX =< X2, PosY =< Y1
+    ->  pixrgb(PosX, PosY, R,G,B, Depth, PixelOut)
+    ;	 pixrgb(_, _, _, _, _, _, PixelOut)
+    ).
+   
+pixelsCroprgb(_,_,_,[],[]).
+pixelsCroprgb(X1, Y1, X2, [PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+    pixelCroprgb(X1, Y1, X2, PixelIn, PixelOut),
+    pixelsCroprgb(X1, Y1, X2, PixelsIn, PixelsOut).
+
+
+pixelCrophex(X1, Y1, X2, PixelIn, PixelOut):-
+    pixhex(PosX, PosY, Hex, Depth, PixelIn),
+    (   PosX >= X1, PosX =< X2, PosY =< Y1
+    ->  pixhex(PosX, PosY, Hex, Depth, PixelOut)
+    ;	 pixhex(_, _, _, _, PixelOut)
+    ).
+   
+pixelsCrophex(_,_,_,[],[]).
+pixelsCrophex(X1, Y1, X2, [PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+    pixelCrophex(X1, Y1, X2, PixelIn, PixelOut),
+    pixelsCrophex(X1, Y1, X2, PixelsIn, PixelsOut).
+
+
+imageCrop(ImageIn, X1, Y1, X2, Y2, ImageOut):-
+    image(_, Height, PixelsIn, ImageIn),
+    (   imageIsBitmap(ImageIn)
+    ->  pixelsCropbit(X1, Y1, X2, PixelsIn, PixelsOut)
+    ;   (   imageIsPixmap(ImageIn)
+        ->  pixelsCroprgb(X1, Y1, X2, PixelsIn, PixelsOut)
+        ;   pixelsCrophex(X1, Y1, X2, PixelsIn, PixelsOut)
+        )
+    ),
+    NewWidth is (X2-X1)+1,
+    NewHeight is Height-((Height-1)-Y2),
+    image(NewWidth, NewHeight, PixelsOut, ImageOut).
 
 
 % imageRGBToHex
@@ -560,13 +623,7 @@ imageRotate90(ImageIn,ImageOut):-
 % image(2,2,[P1,P2,P3,P4],Img1),
 % imageFlipV(Img1,R).
 
-
-
-
-
-
-
-
+ 
 
 % ======================================================
 %                       imageCrop
@@ -592,7 +649,17 @@ imageRotate90(ImageIn,ImageOut):-
 %                       imageRotate90
 % ======================================================
 
-
+% pixbit(0,0,1,10,P1),
+% pixbit(0,1,0,20,P2),
+% pixbit(0,2,0,30,P3),
+% pixbit(1,0,1,40,P4),
+% pixbit(1,1,0,50,P5),
+% pixbit(1,2,1,60,P6),
+% pixbit(2,0,0,70,P7),
+% pixbit(2,1,1,80,P8),
+% pixbit(2,2,1,90,P9),
+% image(3,3,[P1,P2,P3,P4,P5,P6,P7,P8,P9],Img2),
+% imageRotate90(Img2,R).
 
 % ======================================================
 %                       imageCompress
