@@ -390,8 +390,70 @@ imageCrop(ImageIn, X1, Y1, X2, Y2, ImageOut):-
     NewHeight is Height-((Height-1)-Y2),
     image(NewWidth, NewHeight, PixelsOut, ImageOut).
 
-
 % imageRGBToHex
+%  Dominios
+%  imageIn    : List
+%  imageOut	  : List
+%  Predicados
+%  imageRGBToHex(ImageIn, ImageOut) aridad = 2
+%  Metas Primarias: imageRGBToHex
+%  Metas Secundarias: image, pixelsRGBToHex, pixelRGBToHex, converterRGBToHex,toHex,hexNumber,atomic_list_concat, atom_concat, pixrgb, pixhex
+%  Clausulas
+
+hexNumber(C, HexNumberStr):-
+    (   C >= 0, C =< 9
+    ->  number_string(C,HexNumberStr)
+    ;   (   C = 10
+        ->  atom_string(`A`,HexNumberStr)
+        ;   (   C = 11
+            ->  atom_string(`B`,HexNumberStr)
+            ; (   C = 12
+              ->  atom_string(`C`,HexNumberStr)
+              ; (   C = 13
+                ->  atom_string(`D`,HexNumberStr)
+                ; (   C = 14
+                  ->  atom_string(`E`,HexNumberStr)
+                  ; (   C = 15
+                    ->  atom_string(`F`,HexNumberStr)
+                    ; atom_string(malo, HexNumberStr)
+                    )
+                  )
+                )
+              )
+            )
+        )
+    ).
+
+toHex(C,HexOut):-
+    C1 is (C mod 16) mod 16,
+    C2 is C mod 16,
+    hexNumber(C1,Cx), 
+    hexNumber(C2,Cy),
+    atom_concat(Cx,Cy,HexOut).
+
+converterRGBToHex(R,G,B,HexOut):-
+    toHex(R,ROut),
+    toHex(G,GOut),
+    toHex(B,BOut),
+    atomic_list_concat([ROut,GOut,BOut],HexOut).
+    
+pixelRGBToHex(PixelIn, PixelOut):-
+    pixrgb(PosX, PosY, R, G, B, Depth, PixelIn),
+    converterRGBToHex(R,G,B,HexOut),
+    pixhex(PosX, PosY, HexOut, Depth, PixelOut).
+   
+pixelsRGBToHex([],[]).
+pixelsRGBToHex([PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+    pixelRGBToHex(PixelIn, PixelOut),
+    pixelsRGBToHex(PixelsIn, PixelsOut).
+
+imageRGBToHex(ImageIn, ImageOut):-
+    image(Width, Height, PixelsIn, ImageIn),
+    pixelsRGBToHex(PixelsIn, PixelsOut),
+    image(Width, Height, PixelsOut, ImageOut).
+
+
+
 
 % imageToHistogram
 
@@ -624,17 +686,39 @@ imageRotate90(ImageIn,ImageOut):-
 % imageFlipV(Img1,R).
 
  
-
 % ======================================================
 %                       imageCrop
 % ======================================================
 
-
+% pixrgb(0,0,10,10,10,12,P1),
+% pixrgb(0,1,20,20,20,21,P2),
+% pixrgb(0,2,10,10,10,60,P3),
+% pixrgb(0,3,10,10,10,40,P4),
+% pixrgb(1,0,30,30,30,30,P5),
+% pixrgb(1,1,40,40,40,20,P6),
+% pixrgb(1,2,30,30,30,23,P7),
+% pixrgb(1,3,30,30,30,11,P8),
+% pixrgb(2,0,30,30,30,12,P9),
+% pixrgb(2,1,30,30,30,21,P10),
+% pixrgb(2,2,30,30,30,34,P11),
+% pixrgb(2,3,30,30,30,44,P12),
+% pixrgb(3,0,30,30,30,67,P13),
+% pixrgb(3,1,30,30,30,31,P14),
+% pixrgb(3,2,30,30,30,30,P15),
+% pixrgb(3,3,30,30,30,30,P16),
+% image(4,4,[P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,P14,P15,P16],Img4),
+% imageCrop(Img4,1,1,2,1, R).
 
 % ======================================================
 %                       imageRGBToHex
 % ======================================================
 
+% pixrgb(0,0,10,10,10,10,P1),
+% pixrgb(0,1,20,20,20,20,P2),
+% pixrgb(1,0,30,30,30,30,P3),
+% pixrgb(1,1,40,40,40,40,P4),
+% image(2,2,[P1,P2,P3,P4],Img4),
+% imageRGBToHex(Img4,R).
 
 
 
