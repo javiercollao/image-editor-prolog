@@ -10,6 +10,10 @@
 % es map
 % call()
  
+list_length([], 0 ).
+list_length([_|Xs] , L ) :- 
+    list_length(Xs,N) , 
+    L is N+1 .
 
 
 % ======================================================
@@ -352,9 +356,9 @@ pixelsCropbit(X1, Y1, X2, [PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
     pixelsCropbit(X1, Y1, X2, PixelsIn, PixelsOut).
 
 pixelCroprgb(X1, Y1, X2, PixelIn, PixelOut):-
-    pixrgb(PosX, PosY, R,G,B, Depth, PixelIn),
+    pixrgb(PosX, PosY, R, G, B, Depth, PixelIn),
     (   PosX >= X1, PosX =< X2, PosY =< Y1
-    ->  pixrgb(PosX, PosY, R,G,B, Depth, PixelOut)
+    ->  pixrgb(PosX, PosY, R, G, B, Depth, PixelOut)
     ;	 pixrgb(_, _, _, _, _, _, PixelOut)
     ).
    
@@ -452,10 +456,42 @@ imageRGBToHex(ImageIn, ImageOut):-
     pixelsRGBToHex(PixelsIn, PixelsOut),
     image(Width, Height, PixelsOut, ImageOut).
 
-
-
-
 % imageToHistogram
+
+colorBit(Bit, Times, [Bit, Times]).
+ 
+
+is_bit(I) :-
+    I = 1.
+
+not_bit(I):-
+    not(is_bit(I)).
+
+    
+    
+pixelHistogram(PixelIn, ColorOut):-
+    pixbit(_, _, ColorOut, _, PixelIn).
+
+pixelsHistogram([],[]).
+pixelsHistogram([PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+    pixelHistogram(PixelIn, PixelOut),
+    pixelsHistogram(PixelsIn, PixelsOut).
+
+histogram(ImageIn, HistogramOut):-
+    image(_, _, PixelsIn, ImageIn),
+    (   imageIsBitmap(ImageIn)
+    ->   pixelsHistogram(PixelsIn, List),
+        include(is_bit, List, Unos),
+        include(not_bit, List, Ceros),
+        list_length(Unos, R1),
+        list_length(Ceros, R2),
+        colorBit(1,R1,ResponseUnos),
+        colorBit(0,R2,ResponseCeros),
+        append([ResponseUnos], [ResponseCeros], HistogramOut)
+    ;   append(0,0, HistogramOut)
+    ).
+
+    
 
 % imageRotate90
 %  Dominios
