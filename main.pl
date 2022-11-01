@@ -710,9 +710,75 @@ imageCompress(ImageIn, ImageCompresedOut):-
 
 
 % imageChangePixel
+%  Dominios
+%  ImageIn    : List
+%  Pixel      : List
+%  ImageOut	  : List
+%  Predicados
+%  imageChangePixel(ImageIn, Pixel, ImageOut) aridad = 3
+%  Metas Primarias: imageChangePixel
+%  Metas Secundarias: image imageIsBitmap,imageIsPixmap, remplacePixelBit, remplacePixelRgb, remplacePixelHex, newPixelBit, newPixelRgb, newPixelHex
+%  Clausulas
+
+newPixelBit(Pixel, PixelIn, PixelOut):-
+    pixbit(Px,Py,Cbit,Dpth,Pixel),
+    pixbit(PosX,PosY,Bit,Depth,PixelIn),
+    (   Px = PosX, Py = PosY
+    ->  pixbit(Px,Py,Cbit,Dpth,PixelOut)
+    ;   pixbit(PosX,PosY,Bit,Depth,PixelOut)
+    ).
+    
+remplacePixelBit(_,[],[]).
+remplacePixelBit(Pixel,[PixelIn|PixelsIn],[PixelOut|PixelsOut]):-
+    newPixelBit(Pixel, PixelIn, PixelOut),
+    remplacePixelBit(Pixel,PixelsIn,PixelsOut).
+
+
+newPixelRgb(Pixel, PixelIn, PixelOut):-
+    pixrgb(Px,Py,CR,CG,CB,Dpth,Pixel),
+    pixrgb(PosX,PosY,R,G,B,Depth,PixelIn),
+    (   Px = PosX, Py = PosY
+    ->  pixrgb(Px,Py,CR,CG,CB,Dpth,PixelOut)
+    ;   pixrgb(PosX,PosY,R,G,B,Depth,PixelOut)
+    ).
+    
+remplacePixelRgb(_,[],[]).
+remplacePixelRgb(Pixel,[PixelIn|PixelsIn],[PixelOut|PixelsOut]):-
+    newPixelRgb(Pixel, PixelIn, PixelOut),
+    remplacePixelRgb(Pixel,PixelsIn,PixelsOut).
+
+
+
+newPixelHex(Pixel, PixelIn, PixelOut):-
+    pixhex(Px,Py,Chex,Dpth,Pixel),
+    pixhex(PosX,PosY,Hex,Depth,PixelIn),
+    (   Px = PosX, Py = PosY
+    ->  pixhex(Px,Py,Chex,Dpth,PixelOut)
+    ;   pixhex(PosX,PosY,Hex,Depth,PixelOut)
+    ).
+    
+remplacePixelHex(_,[],[]).
+remplacePixelHex(Pixel,[PixelIn|PixelsIn],[PixelOut|PixelsOut]):-
+    newPixelHex(Pixel, PixelIn, PixelOut),
+    remplacePixelHex(Pixel,PixelsIn,PixelsOut).
+
+
+
+imageChangePixel(ImageIn, Pixel, ImageOut):-
+    image(Width, Height, PixelsIn, ImageIn),
+    (   imageIsBitmap(ImageIn)
+    ->  remplacePixelBit(Pixel,PixelsIn,PixelsOut)
+    ;   (   imageIsPixmap(ImageIn)
+        ->  remplacePixelRgb(Pixel,PixelsIn,PixelsOut)
+        ;   remplacePixelHex(Pixel,PixelsIn,PixelsOut)
+        )
+    ),
+    image(Width, Height, PixelsOut, ImageOut).
 
 
 % imageInvertColorRGB
+
+
 % imageToString
 % imageDepthLayers
 % imageDecompress
