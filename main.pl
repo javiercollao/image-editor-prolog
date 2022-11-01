@@ -180,8 +180,17 @@ imageIsHexmap(Image):-
     pixelsAreHexmap(Pixels).
 
 % imageIsCompressed
+%  Dominios
+%  image    : List
+%  Predicados
+%  imageIsCompressed(ImageIn) aridad = 1
+%  Metas Primarias: imageIsCompressed
+%  Metas Secundarias:  imageCompresed, length
+%  Clausulas
 
-
+imageIsCompressed(ImageIn):-
+    imageCompresed(Image,_,_, ImageIn),
+    length(Image,3).
 
 % imageFlipH
 %  Dominios
@@ -701,6 +710,8 @@ imageCompress(ImageIn, ImageCompresedOut):-
 
 
 % imageChangePixel
+
+
 % imageInvertColorRGB
 % imageToString
 % imageDepthLayers
