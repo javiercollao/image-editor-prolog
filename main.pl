@@ -733,7 +733,6 @@ remplacePixelBit(Pixel,[PixelIn|PixelsIn],[PixelOut|PixelsOut]):-
     newPixelBit(Pixel, PixelIn, PixelOut),
     remplacePixelBit(Pixel,PixelsIn,PixelsOut).
 
-
 newPixelRgb(Pixel, PixelIn, PixelOut):-
     pixrgb(Px,Py,CR,CG,CB,Dpth,Pixel),
     pixrgb(PosX,PosY,R,G,B,Depth,PixelIn),
@@ -746,8 +745,6 @@ remplacePixelRgb(_,[],[]).
 remplacePixelRgb(Pixel,[PixelIn|PixelsIn],[PixelOut|PixelsOut]):-
     newPixelRgb(Pixel, PixelIn, PixelOut),
     remplacePixelRgb(Pixel,PixelsIn,PixelsOut).
-
-
 
 newPixelHex(Pixel, PixelIn, PixelOut):-
     pixhex(Px,Py,Chex,Dpth,Pixel),
@@ -762,8 +759,6 @@ remplacePixelHex(Pixel,[PixelIn|PixelsIn],[PixelOut|PixelsOut]):-
     newPixelHex(Pixel, PixelIn, PixelOut),
     remplacePixelHex(Pixel,PixelsIn,PixelsOut).
 
-
-
 imageChangePixel(ImageIn, Pixel, ImageOut):-
     image(Width, Height, PixelsIn, ImageIn),
     (   imageIsBitmap(ImageIn)
@@ -777,9 +772,24 @@ imageChangePixel(ImageIn, Pixel, ImageOut):-
 
 
 % imageInvertColorRGB
+%  Dominios
+%  PixeRgbIn    : List 
+%  PixeRgbOut	  : List
+%  Predicados
+%  imageInvertColorRGB(PixelRgbIn, PixelRgbOut) aridad = 2
+%  Metas Primarias: imageInvertColorRGB
+%  Metas Secundarias: pixrgb
+%  Clausulas
 
+imageInvertColorRGB(PixelRgbIn, PixelRgbOut):-
+    pixrgb(PosX,PosY,R,G,B,Depth,PixelRgbIn),
+    NewR is 255-R,
+    NewG is 255-G,
+    NewB is 255-B,
+    pixrgb(PosX,PosY,NewR,NewG,NewB,Depth,PixelRgbOut).
 
 % imageToString
+
 % imageDepthLayers
 % imageDecompress
 
@@ -1065,7 +1075,25 @@ imageChangePixel(ImageIn, Pixel, ImageOut):-
 %                      imageChangePixel
 % ======================================================
 
-
+% pixrgb(0,0,10,10,10,12,P1),
+% pixrgb(0,1,20,20,20,21,P2),
+% pixrgb(0,2,10,10,10,60,P3),
+% pixrgb(0,3,10,10,10,40,P4),
+% pixrgb(1,0,30,30,30,30,P5),
+% pixrgb(1,1,40,40,40,20,P6),
+% pixrgb(1,2,30,30,30,23,P7),
+% pixrgb(1,3,30,30,30,11,P8),
+% pixrgb(2,0,30,30,30,12,P9),
+% pixrgb(2,1,30,30,30,21,P10),
+% pixrgb(2,2,30,30,30,34,P11),
+% pixrgb(2,3,30,30,30,44,P12),
+% pixrgb(3,0,30,30,30,67,P13),
+% pixrgb(3,1,30,30,30,31,P14),
+% pixrgb(3,2,30,30,30,30,P15),
+% pixrgb(3,3,30,30,30,30,P16),
+% image(4,4,[P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,P14,P15,P16],Img4),
+% pixrgb(3,3,230,50,220,30,NewPixel),
+% imageChangePixel(Img4, NewPixel, R).
 
 
 % ======================================================
