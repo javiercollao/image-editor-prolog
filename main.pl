@@ -457,41 +457,82 @@ imageRGBToHex(ImageIn, ImageOut):-
     image(Width, Height, PixelsOut, ImageOut).
 
 % imageToHistogram
+%  Dominios
+%  imageIn    : List
+%  imageOut	  : List
+%  Predicados
+%  imageToHistogram(ImageIn, HistogramOut) aridad = 2
+%  Metas Primarias: imageToHistogram
+%  Metas Secundarias: imageIsBitmap,imageIsPixmap, pixelsHistogramBit,pixelsHistogramRgb,pixelsHistogramHex,histogramColor,pixelHistogramBit,pixelHistogramRgb, pixelHistogramHex, pixbit,pixrgb,pixhex
+%  Clausulas
 
-colorBit(Bit, Times, [Bit, Times]).
- 
 
-is_bit(I) :-
-    I = 1.
+colorCounter(Color, Times, [Color, Times]).
 
-not_bit(I):-
-    not(is_bit(I)).
+colorRGB(R,G,B,[R,G,B]).
 
+elementHistogram(Color, List, Out):-
+	filterListIncl(Color, List, OutL),
+    list_length(OutL, RLength),
+    colorCounter(Color, RLength, Out).
     
-    
-pixelHistogram(PixelIn, ColorOut):-
+histogramColor([],[]).
+histogramColor([ColorIn | ColorsIn], [ColorOut | ColorsOut]):-
+    elementHistogram(ColorIn,[ColorIn | ColorsIn], ColorOut),
+    filterList(ColorIn, ColorsIn, NewColorsIn),
+    histogramColor(NewColorsIn, ColorsOut).
+
+are_identical(X, Y) :-
+    X == Y.
+
+filterList(A, In, Out) :-
+    exclude(are_identical(A), In, Out).
+
+filterListIncl(A, In, Out) :-
+    include(are_identical(A), In, Out).
+
+
+pixelHistogramBit(PixelIn, ColorOut):-
     pixbit(_, _, ColorOut, _, PixelIn).
 
-pixelsHistogram([],[]).
-pixelsHistogram([PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
-    pixelHistogram(PixelIn, PixelOut),
-    pixelsHistogram(PixelsIn, PixelsOut).
+pixelsHistogramBit([],[]).
+pixelsHistogramBit([PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+    pixelHistogramBit(PixelIn, PixelOut),
+    pixelsHistogramBit(PixelsIn, PixelsOut).
 
-histogram(ImageIn, HistogramOut):-
+
+pixelHistogramRgb(PixelIn, ColorOut):-
+    pixrgb(_, _, R, G, B, _, PixelIn),
+    colorRGB(R,G,B,ColorOut).
+
+pixelsHistogramRgb([],[]).
+pixelsHistogramRgb([PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+    pixelHistogramRgb(PixelIn, PixelOut),
+    pixelsHistogramRgb(PixelsIn, PixelsOut).
+
+
+pixelHistogramHex(PixelIn, ColorOut):-
+    pixhex(_, _, ColorOut, _, PixelIn).
+
+pixelsHistogramHex([],[]).
+pixelsHistogramHex([PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
+    pixelHistogramHex(PixelIn, PixelOut),
+    pixelsHistogramHex(PixelsIn, PixelsOut).
+
+
+imageToHistogram(ImageIn, HistogramOut):-
     image(_, _, PixelsIn, ImageIn),
     (   imageIsBitmap(ImageIn)
-    ->   pixelsHistogram(PixelsIn, List),
-        include(is_bit, List, Unos),
-        include(not_bit, List, Ceros),
-        list_length(Unos, R1),
-        list_length(Ceros, R2),
-        colorBit(1,R1,ResponseUnos),
-        colorBit(0,R2,ResponseCeros),
-        append([ResponseUnos], [ResponseCeros], HistogramOut)
-    ;   append(0,0, HistogramOut)
+    ->   pixelsHistogramBit(PixelsIn, List),
+         histogramColor(List, HistogramOut)
+    ;   (    imageIsPixmap(ImageIn)
+        ->  pixelsHistogramRgb(PixelsIn, List),
+            histogramColor(List, HistogramOut)
+        ;   pixelsHistogramHex(PixelsIn, List),
+            histogramColor(List, HistogramOut)
+        )
     ).
 
-    
 
 % imageRotate90
 %  Dominios
