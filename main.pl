@@ -193,8 +193,6 @@ imageIsHexmap(Image):-
 %  Metas Secundarias: image, imageIsBitmap, imageIsPixmap, pixelsFlipHbit, pixelsFlipHrgb, pixelsFlipHhex, pixelFlipHbit, pixelFlipHrgb, pixelFlipHhex, pixbit, pixrgb, pixhex
 %  Clausulas
 
-
-
 pixelFlipHbit(Width, PixelIn, PixelOut):-
     pixbit(PosX, PosY, Bit, Depth, PixelIn),
     W is Width-1,
@@ -380,7 +378,6 @@ pixelsCrophex(X1, Y1, X2, [PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
     pixelCrophex(X1, Y1, X2, PixelIn, PixelOut),
     pixelsCrophex(X1, Y1, X2, PixelsIn, PixelsOut).
 
-
 imageCrop(ImageIn, X1, Y1, X2, Y2, ImageOut):-
     image(_, Height, PixelsIn, ImageIn),
     (   imageIsBitmap(ImageIn)
@@ -466,7 +463,6 @@ imageRGBToHex(ImageIn, ImageOut):-
 %  Metas Secundarias: imageIsBitmap,imageIsPixmap, pixelsHistogramBit,pixelsHistogramRgb,pixelsHistogramHex,histogramColor,pixelHistogramBit,pixelHistogramRgb, pixelHistogramHex, pixbit,pixrgb,pixhex
 %  Clausulas
 
-
 colorCounter(Color, Times, [Color, Times]).
 
 colorRGB(R,G,B,[R,G,B]).
@@ -491,7 +487,6 @@ filterList(A, In, Out) :-
 filterListIncl(A, In, Out) :-
     include(are_identical(A), In, Out).
 
-
 pixelHistogramBit(PixelIn, ColorOut):-
     pixbit(_, _, ColorOut, _, PixelIn).
 
@@ -499,7 +494,6 @@ pixelsHistogramBit([],[]).
 pixelsHistogramBit([PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
     pixelHistogramBit(PixelIn, PixelOut),
     pixelsHistogramBit(PixelsIn, PixelsOut).
-
 
 pixelHistogramRgb(PixelIn, ColorOut):-
     pixrgb(_, _, R, G, B, _, PixelIn),
@@ -533,7 +527,6 @@ imageToHistogram(ImageIn, HistogramOut):-
         )
     ).
 
-
 % imageRotate90
 %  Dominios
 %  imageIn    : List
@@ -553,7 +546,6 @@ pixelsRotate90Bit([PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
       pixelRotate90Bit(PixelIn, PixelOut),
       pixelsRotate90Bit(PixelsIn, PixelsOut).
 
-
 pixelRotate90Rgb(PixelIn, PixelOut):-
       pixrgb(PosX, PosY, R,G,B, Depth, PixelIn),
       pixrgb(PosY, PosX, R,G,B, Depth, PixelOut).
@@ -572,7 +564,6 @@ pixelsRotate90Hex([PixelIn | PixelsIn], [PixelOut | PixelsOut]):-
       pixelRotate90Hex(PixelIn, PixelOut),
       pixelsRotate90Hex(PixelsIn, PixelsOut).
 
-
 imageRotate90(ImageIn,ImageOut):- 
     image(Width, Height, PixelsIn, ImageIn),
     (   imageIsBitmap(ImageIn)
@@ -586,16 +577,136 @@ imageRotate90(ImageIn,ImageOut):-
     imageFlipH(ImageAux,ImageOut). 
 
 % imageCompress
+%  Dominios
+%  imageIn    : List
+%  imageOut	  : List
+%  Predicados
+%  imageCompress(ImageIn, ImageCompresedOut) aridad = 2
+%  Metas Primarias: imageCompress
+%  Metas Secundarias: imageIsBitmap,imageIsPixmap, imageToHistogram,timesList,max_list, colorMax, image, depthsFilterBit, depthsFilterRgb, depthsFilterHex, filterPixelsBit, filterPixelsRgb, filterPixelsHex,imageCompresed
+%  Clausulas
+
+imageCompresed(Image, Color, Depths, [Image, Color, Depths]).
+
+times(HIn, NumberOut):-
+    colorCounter(_, NumberOut, HIn).
+
+timesList([],[]).
+timesList([HIn | HsIn], [NumberOut | NumbersOut]):-
+      times(HIn, NumberOut),
+      timesList(HsIn, NumbersOut).
+
+colorMax( MaxNOut, [HIn | HsIn], ColorOut):-
+    colorCounter(_, Times, HIn),
+    (   Times = MaxNOut
+    ->  colorCounter(ColorOut, Times, HIn)
+    ;   colorMax( MaxNOut, HsIn, ColorOut)
+    ).
+
+ depthFilterBit(Color, PixelIn, DepthOut):-
+     pixbit(_,_,C,_,PixelIn),
+     (   C = Color
+     ->  pixbit(_,_,_,DepthOut,PixelIn)
+     ;   DepthOut = _).
+
+ depthsFilterBit(_,[], []).
+ depthsFilterBit(Color,[PixelIn | PixelsIn], [DepthOut | PixelsOut]):-
+     depthFilterBit(Color, PixelIn, DepthOut),
+     depthsFilterBit(Color, PixelsIn, PixelsOut).
+    
+depthFilterHex(Color, PixelIn, DepthOut):-
+     pixhex(_,_,C,_,PixelIn),
+     (   C = Color
+     ->  pixhex(_,_,_,DepthOut,PixelIn)
+     ;   DepthOut = _).
+
+ depthsFilterHex(_,[], []).
+ depthsFilterHex(Color,[PixelIn | PixelsIn], [DepthOut | PixelsOut]):-
+     depthFilterHex(Color, PixelIn, DepthOut),
+     depthsFilterHex(Color, PixelsIn, PixelsOut).
+
+depthFilterRgb(Color, PixelIn, DepthOut):-
+     pixrgb(_,_,R,G,B,_,PixelIn),
+     colorRGB(R,G,B,C),
+     (   C = Color
+     ->  pixrgb(_,_,_,_,_,DepthOut,PixelIn)
+     ;   DepthOut = _).
+
+ depthsFilterRgb(_,[], []).
+ depthsFilterRgb(Color,[PixelIn | PixelsIn], [DepthOut | PixelsOut]):-
+     depthFilterRgb(Color, PixelIn, DepthOut),
+     depthsFilterRgb(Color, PixelsIn, PixelsOut).
+
+filterPixelBit(Color, PixelIn, PixelOut):-
+    pixbit(PosX,PosY,C,Dpth,PixelIn),
+    (   Color = C
+    ->  PixelOut = "str"
+    ;   pixbit(PosX,PosY,C,Dpth,PixelOut)
+    ).
+
+filterPixelsBit(_,[],[]).
+filterPixelsBit(Color, [PixelIn | PixelsIn], [ PixelOut | PixelsOut]):-
+     filterPixelBit(Color, PixelIn, PixelOut),
+     filterPixelsBit(Color, PixelsIn, PixelsOut).
+
+filterPixelHex(Color, PixelIn, PixelOut):-
+    pixhex(PosX,PosY,C,Dpth,PixelIn),
+    (   Color = C
+    ->  PixelOut = 9
+    ;   pixhex(PosX,PosY,C,Dpth,PixelOut)
+    ).
+
+filterPixelsHex(_,[],[]).
+filterPixelsHex(Color, [PixelIn | PixelsIn], [ PixelOut | PixelsOut]):-
+     filterPixelHex(Color, PixelIn, PixelOut),
+     filterPixelsHex(Color, PixelsIn, PixelsOut).
+
+filterPixelRgb(Color, PixelIn, PixelOut):-
+    pixrgb(PosX,PosY,Raux,Gaux,Baux,Dpth,PixelIn),
+    colorRGB(Raux,Gaux,Baux,C),
+    (   Color = C
+    ->  PixelOut = "str"
+    ;   pixrgb(PosX,PosY,Raux,Gaux,Baux,Dpth,PixelOut)
+    ).
+
+filterPixelsRgb(_,[],[]).
+filterPixelsRgb(Color, [PixelIn | PixelsIn], [ PixelOut | PixelsOut]):-
+     filterPixelRgb(Color, PixelIn, PixelOut),
+     filterPixelsRgb(Color, PixelsIn, PixelsOut).
+
+imageCompress(ImageIn, ImageCompresedOut):-
+    imageToHistogram(ImageIn, HistogramOut),
+    timesList(HistogramOut, ListNumbers),
+    max_list(ListNumbers, MaxNOut),
+    colorMax(MaxNOut, HistogramOut, ColorMaxOut),
+    image(Width, Height, PixelsIn, ImageIn),
+    (   imageIsBitmap(ImageIn)
+    ->  depthsFilterBit(ColorMaxOut, PixelsIn, DepthsAux),
+    	include(number, DepthsAux, DepthsOut),
+    	filterPixelsBit(ColorMaxOut, PixelsIn, PixelsAux),
+    	exclude(string, PixelsAux,PixelsOut)
+    ;   (   imageIsPixmap(ImageIn)
+        ->  depthsFilterRgb(ColorMaxOut, PixelsIn, DepthsAux),
+    		include(number, DepthsAux, DepthsOut),
+    		filterPixelsRgb(ColorMaxOut, PixelsIn, PixelsAux),
+    		exclude(string, PixelsAux,PixelsOut)
+        ;   depthsFilterHex(ColorMaxOut, PixelsIn, DepthsAux),
+    		include(number, DepthsAux, DepthsOut),
+    		filterPixelsHex(ColorMaxOut, PixelsIn, PixelsAux),
+    		exclude(number, PixelsAux,PixelsOut)
+        )
+    ),
+    image(Width, Height, PixelsOut, ImageOut),
+    imageCompresed(ImageOut, ColorMaxOut, DepthsOut, ImageCompresedOut).
+
+
 % imageChangePixel
 % imageInvertColorRGB
 % imageToString
 % imageDepthLayers
 % imageDecompress
 
-
-
-
-
+ 
 
 
 
@@ -803,7 +914,24 @@ imageRotate90(ImageIn,ImageOut):-
 %                       imageToHistogram
 % ======================================================
 
-
+% pixrgb(0,0,10,10,10,12,P1),
+% pixrgb(0,1,20,20,20,21,P2),
+% pixrgb(0,2,10,10,10,60,P3),
+% pixrgb(0,3,10,10,10,40,P4),
+% pixrgb(1,0,30,30,30,30,P5),
+% pixrgb(1,1,40,40,40,20,P6),
+% pixrgb(1,2,30,30,30,23,P7),
+% pixrgb(1,3,30,30,30,11,P8),
+% pixrgb(2,0,30,30,30,12,P9),
+% pixrgb(2,1,30,30,30,21,P10),
+% pixrgb(2,2,30,30,30,34,P11),
+% pixrgb(2,3,30,30,30,44,P12),
+% pixrgb(3,0,30,30,30,67,P13),
+% pixrgb(3,1,30,30,30,31,P14),
+% pixrgb(3,2,30,30,30,30,P15),
+% pixrgb(3,3,30,30,30,30,P16),
+% image(4,4,[P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,P14,P15,P16],Img4),
+% imageToHistogram(Img4,R).
 
 
 % ======================================================
@@ -825,6 +953,34 @@ imageRotate90(ImageIn,ImageOut):-
 % ======================================================
 %                       imageCompress
 % ======================================================
+
+
+% pixbit(0,0,1,10,P1),
+% pixbit(0,1,0,20,P2),
+% pixbit(0,2,0,30,P3),
+% pixbit(1,0,1,10,P4),
+% pixbit(1,1,0,10,P5),
+% pixbit(1,2,1,10,P6),
+% pixbit(2,0,0,10,P7),
+% pixbit(2,1,1,10,P8),
+% pixbit(2,2,1,10,P9),
+% image(3,3,[P1,P2,P3,P4,P5,P6,P7,P8,P9],Img2),
+% imageCompress(Img2, CImg2).
+
+
+
+
+% pixhex(0,0,"0A0A0A",13,P1),
+% pixhex(0,1,"141414",24,P2),
+% pixhex(0,2,"0A0A0A",1,P3),
+% pixhex(1,0,"1E1E1E",330,P4),
+% pixhex(1,1,"282828",20,P5),
+% pixhex(1,2,"1E1E1E",35,P6),
+% pixhex(2,0,"1E1E1E",3,P7),
+% pixhex(2,1,"1E1E1E",6,P8),
+% pixhex(2,2,"1E1E1E",66,P9),
+% image(3,3,[P1,P2,P3,P4,P5,P6,P7,P8,P9],Img6),
+% imageCompress(Img6, CImg6).
 
 
 
