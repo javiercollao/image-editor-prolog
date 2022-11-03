@@ -791,9 +791,51 @@ imageInvertColorRGB(PixelRgbIn, PixelRgbOut):-
 % imageToString
 
 % imageDepthLayers
+
+
 % imageDecompress
 
  
+position(W,H,Position):-
+    append([W],[H], Position).
+
+newPositionsJ(_,0,[]).
+newPositionsJ(W,H, [Position | PositionsOut]):-
+    position(W,H,Position),
+    NewH is H-1,
+    newPositionsJ(W,NewH,PositionsOut).
+    
+
+% 1 1
+% 1 0
+% 0 1
+% 0 0
+
+
+newPositionsI(0, 0, []).
+newPositionsI(W, H,PositionsOut):-
+    NewW is W-1,
+    newPositionsJ(NewW,H,PositionsAux),
+    
+    
+    
+
+positionsGenerator(Width, Height, PositionsOut):-
+    W is Width-1,
+    H is Height-1,
+    newPositions(W,H,PositionsOut).
+
+
+
+imageDecompress(ImageCompressedIn, ImageOut):-
+    imageCompresed(ImageAux, Color, Depths, ImageCompressedIn),
+    image(Width, Height, Pixels, ImageAux),
+	positionsGenerator(Width, Height, PositionsOut),
+	getPositionsOfImageCompressed(Pixels, PositionsImageOut),
+	filterPositions(PositionsOut,PositionsImageOut, PositionsImageDescompressedOut),
+	pixelsGenerator(PositionsImageDescompressedOut, Color, Depths, PixelsAuxOut),
+	mergePixels(Pixels,PixelsAuxOut, PixelsOut),
+    image(Width, Height, PixelsOut, ImageOut).
 
 
 
