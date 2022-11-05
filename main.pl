@@ -795,35 +795,31 @@ imageInvertColorRGB(PixelRgbIn, PixelRgbOut):-
 
 % imageDecompress
 
- 
-position(W,H,Position):-
-    append([W],[H], Position).
-
-newPositionsJ(_,0,[]).
-newPositionsJ(W,H, [Position | PositionsOut]):-
-    position(W,H,Position),
-    NewH is H-1,
-    newPositionsJ(W,NewH,PositionsOut).
-    
-
-% 1 1
-% 1 0
-% 0 1
-% 0 0
 
 
-newPositionsI(0, 0, []).
-newPositionsI(W, H,PositionsOut):-
+
+positionsGenerator(W,H,PositionsOut):-
     NewW is W-1,
-    newPositionsJ(NewW,H,PositionsAux),
-    
-    
-    
+    NewH is H-1,
+    elementsGeneratorI(NewW, NewH, PositionsOut).
 
-positionsGenerator(Width, Height, PositionsOut):-
-    W is Width-1,
-    H is Height-1,
-    newPositions(W,H,PositionsOut).
+elementsGeneratorI(0,J,R):-
+    elementsGeneratorJ(0,J,R).
+
+elementsGeneratorI(I,J,R):-
+    Kant is I-1,
+    elementsGeneratorJ(I,J,Raux),
+    append(Raux, Rant, R),
+    elementsGeneratorI(Kant,J,Rant).
+
+elementsGeneratorJ(I, 0,R):-
+    R=[[I,0]],
+    !.
+
+elementsGeneratorJ(I,J,R):-
+    Kant is J-1,
+    append([[I, J]],Rant,R),
+    elementsGeneratorJ(I,Kant, Rant).
 
 
 
