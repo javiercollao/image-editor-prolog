@@ -708,7 +708,6 @@ imageCompress(ImageIn, ImageCompresedOut):-
     image(Width, Height, PixelsOut, ImageOut),
     imageCompresed(ImageOut, ColorMaxOut, DepthsOut, ImageCompresedOut).
 
-
 % imageChangePixel
 %  Dominios
 %  ImageIn    : List
@@ -770,7 +769,6 @@ imageChangePixel(ImageIn, Pixel, ImageOut):-
     ),
     image(Width, Height, PixelsOut, ImageOut).
 
-
 % imageInvertColorRGB
 %  Dominios
 %  PixeRgbIn    : List 
@@ -794,7 +792,6 @@ imageInvertColorRGB(PixelRgbIn, PixelRgbOut):-
 
 
 % imageDepthLayers
-
 
 
 positionsGenerator(W,H,PositionsOut):-
@@ -822,6 +819,50 @@ elementsGeneratorJ(I,J,R):-
 
 
 
+%%  ==== bit
+
+pixelByDepth(D,P,POut):-
+    pixbit(PosX,PosY,Bit,Depth,P),
+    (   Depth = D
+    ->  pixbit(PosX,PosY,Bit,Depth,POut)
+    ;   POut = "no"
+    ).
+
+
+filterPixelByDepth(_,[],[]).
+filterPixelByDepth(D, [P | PixelsIn], [POut | PixelsOut]):-
+    pixelByDepth(D, P, POut),
+    filterPixelByDepth(D, PixelsIn, PixelsOut).
+
+filterPixelsByDepthsListBit([],_,[]).
+filterPixelsByDepthsListBit([D | DepthsList], PixelsIn, [PixelOut | PixelsList]):-
+    filterPixelByDepth(D, PixelsIn, PixelOut),
+    filterPixelsByDepthsListBit(DepthsList, PixelsIn, PixelsList).
+
+%%  ==== bit
+
+
+clearList([],[]).
+clearList([PL |PixelLists],[POut | PixelsListsOut]):-
+	exclude(string, PL, POut),
+    clearList(PixelLists,PixelsListsOut).
+
+
+
+filterDepths([],[]).
+filterDepths([D | DepthsListIn], DepthsList):-
+    filterList(D, DepthsListIn, DepthsListInAux),
+    append([D], Rant, DepthsList),
+    filterDepths(DepthsListInAux, Rant).
+
+ imageDepthLayers(ImageIn, ImageByLayers):-
+     image(Width, Height, PixelsIn, ImageIn),
+     positionsGenerator(Width, Height, PositionsOut),
+     getDepths(PixelsIn, DepthsListAux),
+     filterDepths(DepthsListAux, DepthsList), % lista de todos los depts
+     filterPixelsByDepthsListBit(DepthsList, PixelsIn, PixelsLists), % aqui vamos a filtrar todos los depths include
+     clearList(PixelsLists,PixelsListsOut),
+
 
 
 
@@ -835,13 +876,9 @@ elementsGeneratorJ(I,J,R):-
 %  Metas Primarias: imageDecompress
 %  Metas Secundarias: imageCompresed, image, positionsGenerator, imageIsBitmap,imageIsPixmap,getPositionsOfImageCompressedRgb,getPositionsOfImageCompressedHex, filterPositions, pixelsGeneratorBit,pixelsGeneratorRgb,pixelsGeneratorHex, mergePixels
 %  Clausulas
- 
-
-
 
 mergePixels(Pixels,PixelsAuxOut, PixelsOut):-
     append(Pixels, PixelsAuxOut,PixelsOut).
-
 
 positionOfPixel(X,Y,[X,Y]).
 
