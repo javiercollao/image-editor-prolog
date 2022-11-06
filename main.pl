@@ -790,11 +790,10 @@ imageInvertColorRGB(PixelRgbIn, PixelRgbOut):-
 
 % imageToString
 
+
+
+
 % imageDepthLayers
-
-
-% imageDecompress
-
 
 
 
@@ -823,13 +822,108 @@ elementsGeneratorJ(I,J,R):-
 
 
 
+
+
+
+
+% imageDecompress
+%  Dominios
+%  ImageCompressedIn   : List 
+%  ImageOut 	  : List
+%  Predicados
+%  imageDecompress(ImageCompressedIn, ImageOut) aridad = 2
+%  Metas Primarias: imageDecompress
+%  Metas Secundarias: imageCompresed, image, positionsGenerator, imageIsBitmap,imageIsPixmap,getPositionsOfImageCompressedRgb,getPositionsOfImageCompressedHex, filterPositions, pixelsGeneratorBit,pixelsGeneratorRgb,pixelsGeneratorHex, mergePixels
+%  Clausulas
+ 
+
+
+
+mergePixels(Pixels,PixelsAuxOut, PixelsOut):-
+    append(Pixels, PixelsAuxOut,PixelsOut).
+
+
+positionOfPixel(X,Y,[X,Y]).
+
+newPixelBit(Pos,Color,D,P):-
+    positionOfPixel(X,Y,Pos),
+    pixbit(X,Y,Color,D,P).
+
+pixelsGeneratorBit([],_,[],[]).
+pixelsGeneratorBit([Pos|PositionsImageDescompressedOut], Color, [D|Depths], [P|PixelsAuxOut]):-
+    newPixelBit(Pos,Color,D,P),
+    pixelsGeneratorBit(PositionsImageDescompressedOut, Color, Depths, PixelsAuxOut).
+ 
+newPixelRgbP(Pos,Color,D,P):-
+    positionOfPixel(X,Y,Pos),
+    colorRGB(R,G,B,Color),
+    pixrgb(X,Y,R,G,B,D,P).
+
+pixelsGeneratorRgb([],_,[],[]).
+pixelsGeneratorRgb([Pos|PositionsImageDescompressedOut], Color, [D|Depths], [P|PixelsAuxOut]):-
+    newPixelRgbP(Pos,Color,D,P),
+    pixelsGeneratorRgb(PositionsImageDescompressedOut, Color, Depths, PixelsAuxOut).
+
+newPixelHex(Pos,Color,D,P):-
+    positionOfPixel(X,Y,Pos),
+    pixhex(X,Y,Color,D,P).
+
+pixelsGeneratorHex([],_,[],[]).
+pixelsGeneratorHex([Pos|PositionsImageDescompressedOut], Color, [D|Depths], [P|PixelsAuxOut]):-
+    newPixelHex(Pos,Color,D,P),
+    pixelsGeneratorHex(PositionsImageDescompressedOut, Color, Depths, PixelsAuxOut).
+
+filterPositions([],R,R).
+filterPositions([Pos | Positions], PositionsImage , PositionsImageDescompressedOut):-
+    filterList(Pos, PositionsImage, PositionsImageDescompressedOutAux),
+    filterPositions(Positions, PositionsImageDescompressedOutAux , PositionsImageDescompressedOut).
+
+getPositionBit(PixelIn, PosOut):-
+    pixbit(PosX,PosY,_,_,PixelIn),
+    PosOut=[PosX,PosY].
+    
+getPositionsOfImageCompressedBit([],[]).
+getPositionsOfImageCompressedBit([PixelIn | PixelsIn], [ PosOut | PositionsOut]):-
+     getPositionBit(PixelIn, PosOut),
+     getPositionsOfImageCompressedBit(PixelsIn, PositionsOut).
+
+getPositionRgb(PixelIn, PosOut):-
+    pixrgb(PosX,PosY,_,_,_,_,PixelIn),
+    PosOut=[PosX,PosY].
+    
+getPositionsOfImageCompressedRgb([],[]).
+getPositionsOfImageCompressedRgb([PixelIn | PixelsIn], [ PosOut | PositionsOut]):-
+     getPositionRgb(PixelIn, PosOut),
+     getPositionsOfImageCompressedRgb(PixelsIn, PositionsOut).
+
+getPositionHex(PixelIn, PosOut):-
+    pixhex(PosX,PosY,_,_,PixelIn),
+    PosOut=[PosX,PosY].
+    
+getPositionsOfImageCompressedHex([],[]).
+getPositionsOfImageCompressedHex([PixelIn | PixelsIn], [ PosOut | PositionsOut]):-
+     getPositionHex(PixelIn, PosOut),
+     getPositionsOfImageCompressedHex(PixelsIn, PositionsOut).
+
 imageDecompress(ImageCompressedIn, ImageOut):-
-    imageCompresed(ImageAux, Color, Depths, ImageCompressedIn),
+    imageCompresed(ImageAux, Color, Depths, ImageCompressedIn),getPositionsOfImageCompressedBit,
     image(Width, Height, Pixels, ImageAux),
 	positionsGenerator(Width, Height, PositionsOut),
-	getPositionsOfImageCompressed(Pixels, PositionsImageOut),
-	filterPositions(PositionsOut,PositionsImageOut, PositionsImageDescompressedOut),
-	pixelsGenerator(PositionsImageDescompressedOut, Color, Depths, PixelsAuxOut),
+    (   imageIsBitmap(ImageAux)
+    ->  getPositionsOfImageCompressedBit(Pixels, PositionsImageOut)
+    ;   (   imageIsPixmap(ImageAux)
+        ->  getPositionsOfImageCompressedRgb(Pixels, PositionsImageOut)
+        ;   getPositionsOfImageCompressedHex(Pixels, PositionsImageOut)
+        )
+    ),
+	filterPositions(PositionsImageOut, PositionsOut, PositionsImageDescompressedOut),
+    (   imageIsBitmap(ImageAux)
+    ->  pixelsGeneratorBit(PositionsImageDescompressedOut, Color, Depths, PixelsAuxOut)
+    ;   (   imageIsPixmap(ImageAux)
+        ->  pixelsGeneratorRgb(PositionsImageDescompressedOut, Color, Depths, PixelsAuxOut)
+        ;   pixelsGeneratorHex(PositionsImageDescompressedOut, Color, Depths, PixelsAuxOut)
+        )
+    ),
 	mergePixels(Pixels,PixelsAuxOut, PixelsOut),
     image(Width, Height, PixelsOut, ImageOut).
 
@@ -1150,4 +1244,34 @@ imageDecompress(ImageCompressedIn, ImageOut):-
 % ======================================================
 %                       imageDecompress
 % ======================================================
+
+
+% CImg1 = [
+% [3, 3, [[0, 1, 0, 20], [0, 2, 0, 30], [1, 1, 0, 10], [2, 0, 0, 10]]],
+% 1,
+% [10, 10, 10, 10, 10]
+% ],
+% imageDecompress(CImg2, I).
+
+% CImg2 = [
+% [3, 3, [[0, 1, 0, 20], [0, 2, 0, 30], [1, 1, 0, 10], [2, 0, 0, 10]]],
+% 1,
+% [10, 10, 10, 10, 10]
+% ],
+% imageDecompress(CImg2, Im).
+
+
+% CImg3 = [[3, 3, [
+% [0, 0, "0A0A0A", 13],
+% [0, 1, "141414", 24],
+% [0, 2, "0A0A0A", 1],
+% [1, 1, "282828", 20]
+% ]], "1E1E1E", [330, 35, 3, 6, 66]],
+% imageDecompress(CImg3, Im).
+
+
+
+
+
+
 
