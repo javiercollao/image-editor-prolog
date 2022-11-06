@@ -787,8 +787,34 @@ imageInvertColorRGB(PixelRgbIn, PixelRgbOut):-
     pixrgb(PosX,PosY,NewR,NewG,NewB,Depth,PixelRgbOut).
 
 % imageToString
+%  Dominios
+%  ImageIn    : List 
+%  ImageStr	  : String
+%  Predicados
+%  imageToString(ImageIn, ImageStr) aridad = 2
+%  Metas Primarias: imageInvertColorRGB
+%  Metas Secundarias: image, pixelsToString, atomic_list_concat,
+%  Clausulas
 
 
+pixelToStr(Width, Height,PosX,PosY,Bit,PStr):-
+    number_string(Bit,BitStr), 
+    (   PosX < Width, PosY < Height-1
+        ->  string_concat(BitStr, '\t', PStr)
+        ;   string_concat(BitStr, '\n', PStr)
+    ).
+
+
+pixelsToString(_,_,[],[]).
+pixelsToString(Width, Height, [P | PixelsIn], [PStr | PixelsString]):-
+    pixbit(PosX,PosY,Bit,_,P),
+    pixelToStr(Width, Height,PosX,PosY,Bit,PStr),
+    pixelsToString(Width, Height, PixelsIn, PixelsString).
+
+imageToString(ImageIn, ImageStr):-
+    image(Width, Height, PixelsIn, ImageIn),
+    pixelsToString(Width, Height, PixelsIn, PixelsString),
+    atomic_list_concat(PixelsString,ImageStr).
 
 
 % imageDepthLayers
@@ -1269,6 +1295,23 @@ imageDecompress(ImageCompressedIn, ImageOut):-
 %                       imageInvertColorRG
 % ======================================================
 
+
+
+% ======================================================
+%                       imageToString
+% ======================================================
+
+% pixbit(0,0,1,10,P1),
+% pixbit(0,1,0,20,P2),
+% pixbit(0,2,0,30,P3),
+% pixbit(1,0,1,10,P4),
+% pixbit(1,1,0,10,P5),
+% pixbit(1,2,1,10,P6),
+% pixbit(2,0,0,10,P7),
+% pixbit(2,1,1,10,P8),
+% pixbit(2,2,1,10,P9),
+% image(3,3,[P1,P2,P3,P4,P5,P6,P7,P8,P9],Img2),
+% imageToString(Img2, I).
 
 
 % ======================================================
