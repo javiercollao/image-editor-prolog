@@ -12,12 +12,10 @@ e. 1: Implementación completa sin problemas (funciona 100% de las veces)
 Requerimientos No funcionales
 
 1. (obligatorio) Autoevaluación:    1
-2. (obligatorio) Lenguaje Scheme:   1
+2. (obligatorio) Lenguaje:          1
 3. (obligatorio) Versión:           1
-4. (obligatorio) Standard:          1
-5. (obligatorio) No variables:      1
-6. (1 pts) Documentación:           1
-7. (obligatorio) Dom->Rec:          1
+4. (obligatorio) Standard:          1 
+6. (1 pts) Documentación:           1 
 8. (1 pts) Organización:            1
 9. (2.5 pts) Historial:             1
 10. (obligatorio) Pruebas:          1
