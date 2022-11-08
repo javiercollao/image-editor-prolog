@@ -818,7 +818,14 @@ imageToString(ImageIn, ImageStr):-
 
 
 % imageDepthLayers
-
+%  Dominios
+%  ImageIn        : List 
+%  ImageByLayers  : List
+%  Predicados
+%  imageDepthLayers(ImageIn, ImageByLayers) aridad = 2
+%  Metas Primarias: imageDepthLayers
+%  Metas Secundarias: image, positionsGenerator, getDepthsBit, getDepthsRgb , getDepthsHex, filterDepths, filterPixelsByDepthsListBit, filterPixelsByDepthsListRgb, filterPixelsByDepthsListHex, clearList, getPositionsListsBit, getPositionsListsRgb, getPositionsListsHex, positionsMissing, pixelsGeneratorListsBit, pixelsGeneratorListsRgb ,pixelsGeneratorListsHex, mergePixelsLists, imagesGenerator
+%  Clausulas
 
 positionsGenerator(W,H,PositionsOut):-
     NewW is W-1,
@@ -843,37 +850,100 @@ elementsGeneratorJ(I,J,R):-
     append([[I, J]],Rant,R),
     elementsGeneratorJ(I,Kant, Rant).
 
-
-
 %%  ==== bit
-
-pixelByDepth(D,P,POut):-
+pixelByDepthBit(D,P,POut):-
     pixbit(PosX,PosY,Bit,Depth,P),
     (   Depth = D
     ->  pixbit(PosX,PosY,Bit,Depth,POut)
     ;   POut = "no"
     ).
 
-
-filterPixelByDepth(_,[],[]).
-filterPixelByDepth(D, [P | PixelsIn], [POut | PixelsOut]):-
-    pixelByDepth(D, P, POut),
-    filterPixelByDepth(D, PixelsIn, PixelsOut).
+filterPixelByDepthBit(_,[],[]).
+filterPixelByDepthBit(D, [P | PixelsIn], [POut | PixelsOut]):-
+    pixelByDepthBit(D, P, POut),
+    filterPixelByDepthBit(D, PixelsIn, PixelsOut).
 
 filterPixelsByDepthsListBit([],_,[]).
 filterPixelsByDepthsListBit([D | DepthsList], PixelsIn, [PixelOut | PixelsList]):-
-    filterPixelByDepth(D, PixelsIn, PixelOut),
+    filterPixelByDepthBit(D, PixelsIn, PixelOut),
     filterPixelsByDepthsListBit(DepthsList, PixelsIn, PixelsList).
-
 %%  ==== bit
 
+%%  ==== rgb
+pixelByDepthRgb(D,P,POut):-
+    pixrgb(PosX,PosY,R,G,B,Depth,P),
+    (   Depth = D
+    ->  pixrgb(PosX,PosY,R,G,B,Depth,POut)
+    ;   POut = "no"
+    ).
+
+filterPixelByDepthRgb(_,[],[]).
+filterPixelByDepthRgb(D, [P | PixelsIn], [POut | PixelsOut]):-
+    pixelByDepthRgb(D, P, POut),
+    filterPixelByDepthRgb(D, PixelsIn, PixelsOut).
+
+filterPixelsByDepthsListRgb([],_,[]).
+filterPixelsByDepthsListRgb([D | DepthsList], PixelsIn, [PixelOut | PixelsList]):-
+    filterPixelByDepthRgb(D, PixelsIn, PixelOut),
+    filterPixelsByDepthsListRgb(DepthsList, PixelsIn, PixelsList).
+%%  ==== rgb
+
+%%  ==== hex
+pixelByDepthHex(D,P,POut):-
+    pixhex(PosX,PosY,Hex,Depth,P),
+    (   Depth = D
+    ->  pixbit(PosX,PosY,Hex,Depth,POut)
+    ;   POut = "no"
+    ).
+
+filterPixelByDepthHex(_,[],[]).
+filterPixelByDepthHex(D, [P | PixelsIn], [POut | PixelsOut]):-
+    pixelByDepthHex(D, P, POut),
+    filterPixelByDepthHex(D, PixelsIn, PixelsOut).
+
+filterPixelsByDepthsListHex([],_,[]).
+filterPixelsByDepthsListHex([D | DepthsList], PixelsIn, [PixelOut | PixelsList]):-
+    filterPixelByDepthHex(D, PixelsIn, PixelOut),
+    filterPixelsByDepthsListHex(DepthsList, PixelsIn, PixelsList).
+%%  ==== hex
 
 clearList([],[]).
 clearList([PL |PixelLists],[POut | PixelsListsOut]):-
 	exclude(string, PL, POut),
     clearList(PixelLists,PixelsListsOut).
+ 
+%%  ==== bit
+getDepthsBit([],[]).
+getDepthsBit([P | Ps], [DOut|DsOut]):-
+    getDBit(P,DOut),
+    getDepthsBit(Ps, DsOut). 
 
+getDBit(PixelIn, DOut):-
+    pixbit(_,_,_,D,PixelIn),
+    DOut=D.
+%%  ==== bit
 
+%%  ==== rgb
+getDepthsRgb([],[]).
+getDepthsRgb([P | Ps], [DOut|DsOut]):-
+    getDRgb(P,DOut),
+    getDepthsRgb(Ps, DsOut). 
+
+getDRgb(PixelIn, DOut):-
+    pixrgb(_,_,_,_,_,D,PixelIn),
+    DOut=D.
+%%  ==== rgb
+
+%%  ==== hex
+getDepthsHex([],[]).
+getDepthsHex([P | Ps], [DOut|DsOut]):-
+    getDHex(P,DOut),
+    getDepthsHex(Ps, DsOut). 
+
+getDHex(PixelIn, DOut):-
+    pixhex(_,_,_,D,PixelIn),
+    DOut=D.
+%%  ==== hex
 
 filterDepths([],[]).
 filterDepths([D | DepthsListIn], DepthsList):-
@@ -881,16 +951,118 @@ filterDepths([D | DepthsListIn], DepthsList):-
     append([D], Rant, DepthsList),
     filterDepths(DepthsListInAux, Rant).
 
+%%  ==== bit
+getPositionsListsBit([],[]).
+getPositionsListsBit([P | PixelsList], [PosL | PositionsAuxListO]):-
+    getPositionsOfImageCompressedBit(P, PosL),
+    getPositionsListsBit(PixelsList, PositionsAuxListO).
+%%  ==== bit
+
+%%  ==== rgb
+getPositionsListsRgb([],[]).
+getPositionsListsRgb([P | PixelsList], [PosL | PositionsAuxListO]):-
+    getPositionsOfImageCompressedRgb(P, PosL),
+    getPositionsListsRgb(PixelsList, PositionsAuxListO).
+%%  ==== rgb
+
+%%  ==== hex
+getPositionsListsHex([],[]).
+getPositionsListsHex([P | PixelsList], [PosL | PositionsAuxListO]):-
+    getPositionsOfImageCompressedHex(P, PosL),
+    getPositionsListsHex(PixelsList, PositionsAuxListO).
+%%  ==== hex
+
+positionsMissing([],_,[]).
+positionsMissing([Pgen|Pgens], PgensList, [PosList | PosListsOut]):-
+    filterPositions(Pgen, PgensList, PosList),
+    positionsMissing(Pgens, PgensList, PosListsOut).
+
+%%  ==== bit
+pixelsGeneratorLayersBit([],_,_,[]).
+pixelsGeneratorLayersBit([Pos|PositionsImageDescompressedOut], Color, Depth, [P|PixelsAuxOut]):-
+    newPixelBit(Pos,Color,Depth,P),
+    pixelsGeneratorLayersBit(PositionsImageDescompressedOut, Color, Depth, PixelsAuxOut).
+
+pixelsGeneratorListsBit([],[], []).
+pixelsGeneratorListsBit([P | Ps], [D | DepthsList], [POut | PixelsListsOut]):-
+    pixelsGeneratorLayersBit(P, 0, D, POut),
+    pixelsGeneratorListsBit(Ps,DepthsList, PixelsListsOut).
+%%  ==== bit
+
+%%  ==== rgb
+pixelsGeneratorLayersRgb([],_,_,[]).
+pixelsGeneratorLayersRgb([Pos|PositionsImageDescompressedOut], Color, Depth, [P|PixelsAuxOut]):-
+    newPixelRgbP(Pos,Color,Depth,P),
+    pixelsGeneratorLayersRgb(PositionsImageDescompressedOut, Color, Depth, PixelsAuxOut).
+
+
+pixelsGeneratorListsRgb([],[], []).
+pixelsGeneratorListsRgb([P | Ps], [D | DepthsList], [POut | PixelsListsOut]):-
+    pixelsGeneratorLayersRgb(P, [255,255,255], D, POut),
+    pixelsGeneratorListsRgb(Ps,DepthsList, PixelsListsOut).
+%%  ==== rgb
+
+%%  ==== hex
+pixelsGeneratorLayersHex([],_,_,[]).
+pixelsGeneratorLayersHex([Pos|PositionsImageDescompressedOut], Color, Depth, [P|PixelsAuxOut]):-
+    newPixelHex(Pos,Color,Depth,P),
+    pixelsGeneratorLayersHex(PositionsImageDescompressedOut, Color, Depth, PixelsAuxOut).
+
+
+pixelsGeneratorListsHex([],[], []).
+pixelsGeneratorListsHex([P | Ps], [D | DepthsList], [POut | PixelsListsOut]):-
+    pixelsGeneratorLayersHex(P, "FFFFFF", D, POut),
+    pixelsGeneratorListsHex(Ps,DepthsList, PixelsListsOut).
+%%  ==== hex
+
+mergePixelsLists([], [], []).
+mergePixelsLists([P | Pixels], [PIn | PixelsIn], [POut | PixelsOut] ):-
+    mergePixels(P,PIn, POut),
+    mergePixelsLists(Pixels, PixelsIn, PixelsOut).
+    
+imagesGenerator(_,_,[], []).
+imagesGenerator(Width, Height ,[P | Ps], [ImgOut | ImagesByLayers]):-
+    image(Width, Height, P, ImgOut),
+    imagesGenerator(Width, Height , Ps, ImagesByLayers).
+    
+
+
  imageDepthLayers(ImageIn, ImageByLayers):-
-     image(Width, Height, PixelsIn, ImageIn),
-     positionsGenerator(Width, Height, PositionsOut),
-     getDepths(PixelsIn, DepthsListAux),
-     filterDepths(DepthsListAux, DepthsList), % lista de todos los depts
-     filterPixelsByDepthsListBit(DepthsList, PixelsIn, PixelsLists), % aqui vamos a filtrar todos los depths include
-     clearList(PixelsLists,PixelsListsOut),
-
-
-
+    image(Width, Height, PixelsIn, ImageIn),
+    positionsGenerator(Width, Height, PositionsOut),
+    (   imageIsBitmap(ImageIn)
+    ->  getDepthsBit(PixelsIn, DepthsListAux)
+    ;   (   imageIsPixmap(ImageIn)
+        ->  getDepthsRgb(PixelsIn, DepthsListAux)
+        ;   getDepthsHex(PixelsIn, DepthsListAux)
+        )
+    ),
+    filterDepths(DepthsListAux, DepthsList), 
+    (   imageIsBitmap(ImageIn)
+    ->  filterPixelsByDepthsListBit(DepthsList, PixelsIn, PixelsLists)
+    ;   (   imageIsPixmap(ImageIn)
+        ->  filterPixelsByDepthsListRgb(DepthsList, PixelsIn, PixelsLists)
+        ;   filterPixelsByDepthsListHex(DepthsList, PixelsIn, PixelsLists)
+        )
+    ),
+    clearList(PixelsLists,PixelsListsOutAux),
+    (   imageIsBitmap(ImageIn)
+    ->  getPositionsListsBit(PixelsListsOutAux, PositionsAuxOut)
+    ;   (   imageIsPixmap(ImageIn)
+        ->  getPositionsListsRgb(PixelsListsOutAux, PositionsAuxOut)
+        ;   getPositionsListsHex(PixelsListsOutAux, PositionsAuxOut)
+        )
+    ),
+    positionsMissing(PositionsAuxOut,PositionsOut, PositionsListsOut),
+    (   imageIsBitmap(ImageIn)
+    ->  pixelsGeneratorListsBit(PositionsListsOut, DepthsList, PixelsListsMissingOut)
+    ;   (   imageIsPixmap(ImageIn)
+        ->  pixelsGeneratorListsRgb(PositionsListsOut, DepthsList, PixelsListsMissingOut)
+        ;   pixelsGeneratorListsHex(PositionsListsOut, DepthsList, PixelsListsMissingOut)
+        )
+    ),
+    mergePixelsLists(PixelsListsMissingOut, PixelsListsOutAux, PixelsMergedLists),
+    imagesGenerator(Width, Height ,PixelsMergedLists, ImageByLayers).
 
 
 % imageDecompress
@@ -1318,6 +1490,34 @@ imageDecompress(ImageCompressedIn, ImageOut):-
 %                       imageDepthLayers
 % ======================================================
 
+
+% pixbit(0,0,1,10,P1),
+% pixbit(0,1,0,20,P2),
+% pixbit(1,0,0,30,P3),
+% pixbit(1,1,1,4,P4),
+% image(2,2,[P1,P2,P3,P4],Img1),
+% imageDepthLayers(Img1, I).
+
+
+% pixrgb(0,0,10,10,10,10,P1),
+% pixrgb(0,1,20,20,20,20,P2),
+% pixrgb(1,0,30,30,30,30,P3),
+% pixrgb(1,1,40,40,40,40,P4),
+% image(2,2,[P1,P2,P3,P4],Img4),
+% imageDepthLayers(Img4, I).
+
+
+% pixhex(0,0,"0A0A0A",13,P1),
+% pixhex(0,1,"141414",24,P2),
+% pixhex(0,2,"0A0A0A",1,P3),
+% pixhex(1,0,"1E1E1E",330,P4),
+% pixhex(1,1,"282828",20,P5),
+% pixhex(1,2,"1E1E1E",35,P6),
+% pixhex(2,0,"1E1E1E",3,P7),
+% pixhex(2,1,"1E1E1E",6,P8),
+% pixhex(2,2,"1E1E1E",66,P9),
+% image(3,3,[P1,P2,P3,P4,P5,P6,P7,P8,P9],Img6),
+% imageDepthLayers(Img6, I).
 
 
 
