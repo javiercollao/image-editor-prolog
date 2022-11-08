@@ -796,24 +796,62 @@ imageInvertColorRGB(PixelRgbIn, PixelRgbOut):-
 %  Metas Secundarias: image, pixelsToString, atomic_list_concat,
 %  Clausulas
 
-
-pixelToStr(Width, Height,PosX,PosY,Bit,PStr):-
+%%  ==== bit
+pixelToStrBit(Width, Height,PosX,PosY,Bit,PStr):-
     number_string(Bit,BitStr), 
     (   PosX < Width, PosY < Height-1
         ->  string_concat(BitStr, '\t', PStr)
         ;   string_concat(BitStr, '\n', PStr)
     ).
 
-
-pixelsToString(_,_,[],[]).
-pixelsToString(Width, Height, [P | PixelsIn], [PStr | PixelsString]):-
+pixelsToStringBit(_,_,[],[]).
+pixelsToStringBit(Width, Height, [P | PixelsIn], [PStr | PixelsString]):-
     pixbit(PosX,PosY,Bit,_,P),
-    pixelToStr(Width, Height,PosX,PosY,Bit,PStr),
-    pixelsToString(Width, Height, PixelsIn, PixelsString).
+    pixelToStrBit(Width, Height,PosX,PosY,Bit,PStr),
+    pixelsToStringBit(Width, Height, PixelsIn, PixelsString).
+%%  ==== bit
+
+%%  ==== rgb
+pixelToStrRgb(Width, Height,PosX,PosY,R,G,B,PStr):-
+    number_string(R,RStr), 
+    number_string(G,GStr),
+    number_string(B,BStr),
+    atomic_list_concat(['[', RStr,',',GStr,',',BStr,']'], RgbStr),
+    (   PosX < Width, PosY < Height-1
+        ->  string_concat(RgbStr, '\t', PStr)
+        ;   string_concat(RgbStr, '\n', PStr)
+    ).
+
+pixelsToStringRgb(_,_,[],[]).
+pixelsToStringRgb(Width, Height, [P | PixelsIn], [PStr | PixelsString]):-
+    pixrgb(PosX,PosY,R,G,B,_,P),
+    pixelToStrRgb(Width, Height,PosX,PosY,R,G,B,PStr),
+    pixelsToStringRgb(Width, Height, PixelsIn, PixelsString).
+%%  ==== rgb
+
+%%  ==== hex
+pixelToStrHex(Width, Height,PosX,PosY,Hex,PStr):-
+    (   PosX < Width, PosY < Height-1
+        ->  string_concat(Hex, '\t', PStr)
+        ;   string_concat(Hex, '\n', PStr)
+    ).
+
+pixelsToStringHex(_,_,[],[]).
+pixelsToStringHex(Width, Height, [P | PixelsIn], [PStr | PixelsString]):-
+    pixhex(PosX,PosY,Hex,_,P),
+    pixelToStrHex(Width, Height,PosX,PosY,Hex,PStr),
+    pixelsToStringHex(Width, Height, PixelsIn, PixelsString).
+%%  ==== hex
 
 imageToString(ImageIn, ImageStr):-
     image(Width, Height, PixelsIn, ImageIn),
-    pixelsToString(Width, Height, PixelsIn, PixelsString),
+    (   imageIsBitmap(ImageIn)
+    ->  pixelsToStringBit(Width, Height, PixelsIn, PixelsString)
+    ;   (   imageIsPixmap(ImageIn)
+        ->  pixelsToStringRgb(Width, Height, PixelsIn, PixelsString)
+        ;   pixelsToStringHex(Width, Height, PixelsIn, PixelsString)
+        )
+    ),
     atomic_list_concat(PixelsString,ImageStr).
 
 
