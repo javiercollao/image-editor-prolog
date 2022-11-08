@@ -39,15 +39,14 @@ Por lo que podemos identificar algunas funcionalidades
 15. Separar capas de una imagen 3D en base a la profundidad. De esta forma desde una imagen 3D se puede devolver una lista de imágenes 2D
 16. Redimensionar imágen
 
-
 ### TDAs
 
-Con el análisis del enunciado se concluye que el proyecto contiene:
+A partir del enenunciado se concluye que el programa contiene los siguientes TDAs:
 
-1. TDA image, contiene todas las caractericas de una imagen.
-2. TDA pixbit
-3. TDA pixhex
-4. TDA pixrgb
+1. TDA image, contiene todas las caractericas y funcionalidades de una imagen.
+2. TDA pixbit, contiene todas las caractericas y funcionalidades de una pixel tipo bit.
+3. TDA pixhex, contiene todas las caractericas y funcionalidades de una pixel tipo hexadecimal.
+4. TDA pixrgb, contiene todas las caractericas y funcionalidades de una pixel tipo RGB.
 
 ### Documentación
 
@@ -89,7 +88,6 @@ image(2,2,[P1,P2,P3,P4],Img1),
 imageFlipH(Img1,R).
 ```
 
-
 ```
 pixhex(0,0,"0A0A0A",13,P1),
 pixhex(0,1,"141414",24,P2),
@@ -103,7 +101,6 @@ pixhex(2,2,"1E1E1E",66,P9),
 image(3,3,[P1,P2,P3,P4,P5,P6,P7,P8,P9],Img6),
 imageToHistogram(Img6,R).
 ```
-
 
 ```
 pixrgb( 0, 0, 10, 10, 10, 10, P1), 
@@ -133,10 +130,10 @@ pixrgb(3,1,30,30,30,31,P14),
 pixrgb(3,2,30,30,30,30,P15),
 pixrgb(3,3,30,30,30,30,P16),
 image(4,4,[P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,P14,P15,P16],Img4),
-imageToString(Img4, I).ˇ◊
+imageToString(Img4, I).
 ```
-
 
 ### Software
 
 Para este proyecto es necesario utilizar [SWI Prolog](https://www.swi-prolog.org/pldoc/man?section=typetest). 
+
