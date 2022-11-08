@@ -1,0 +1,45 @@
+Donde debe incluir una lista completa de todos los requerimientos
+funcionales y no funcionales señalando una evaluación para cada uno según la siguiente escala:
+a. 0: No realizado.
+b. 0.25: Implementación con problemas mayores (funciona 25% de las veces o
+no funciona)
+c. 0.5: Implementación con funcionamiento irregular (funciona 50% de las
+veces)
+d. 0.75: Implementación con problemas menores (funciona 75% de las veces)
+e. 1: Implementación completa sin problemas (funciona 100% de las veces)
+
+
+Requerimientos No funcionales
+
+1. (obligatorio) Autoevaluación:    1
+2. (obligatorio) Lenguaje Scheme:   1
+3. (obligatorio) Versión:           1
+4. (obligatorio) Standard:          1
+5. (obligatorio) No variables:      1
+6. (1 pts) Documentación:           1
+7. (obligatorio) Dom->Rec:          1
+8. (1 pts) Organización:            1
+9. (2.5 pts) Historial:             1
+10. (obligatorio) Pruebas:          1
+11. (obligatorio) Prerrequisitos:   1
+
+Requerimientos funcionales	    
+
+TDAs                               1
+image                              1
+imageIsBitmap                      1
+imageIsPixmap                      1
+imageIsHexmap                      1
+imageIsCompressed                  1
+imageFlipH                         1
+imageFlipV                         1
+imageCrop                          1
+imageRGBToHex                      1
+imageToHistogram                   1
+imageRotate90                      1
+imageCompress                      1
+imageChangePixel                   1
+imageInvertColorRGB                1
+imageToString                      1
+imageDepthLayers                   1
+imageDecompress                    1

@@ -42,12 +42,99 @@ Por lo que podemos identificar algunas funcionalidades
 
 ### TDAs
 
-Con el analisis del enunciado se concluye que el proyecto contiene:
+Con el análisis del enunciado se concluye que el proyecto contiene:
 
 1. TDA image, contiene todas las caractericas de una imagen.
 2. TDA pixbit
 3. TDA pixhex
 4. TDA pixrgb
+
+### Documentación
+
+Podemos generar tres tipos de imágenes con el comando image, de tipo bit, rgb y hexadecimal respectivamente.
+
+```
+pixbit(0,0,1,10,P1),
+pixbit(0,1,0,20,P2),
+pixbit(1,0,0,30,P3),
+pixbit(1,1,1,4,P4),
+image(2,2,[P1,P2,P3,P4],Img1).
+
+pixrgb(0,0,10,10,10,10,P1),
+pixrgb(0,1,20,20,20,20,P2),
+pixrgb(1,0,30,30,30,30,P3),
+pixrgb(1,1,40,40,40,40,P4),
+image(2,2,[P1,P2,P3,P4],Img2).
+
+pixhex(0,0,"0A0A0A",13,P1),
+pixhex(0,1,"141414",24,P2),
+pixhex(0,2,"0A0A0A",1,P3),
+pixhex(1,0,"1E1E1E",330,P4),
+pixhex(1,1,"282828",20,P5),
+pixhex(1,2,"1E1E1E",35,P6),
+pixhex(2,0,"1E1E1E",3,P7),
+pixhex(2,1,"1E1E1E",6,P8),
+pixhex(2,2,"1E1E1E",66,P9),
+image(3,3,[P1,P2,P3,P4,P5,P6,P7,P8,P9],Img3).
+
+```
+Para cada imagen podemos utilizar diferentes funciones como imageFlipH, imageFlipV, imageCrop, imageToHistogram, imageCompress, imageDecompress, entre otras.
+
+```
+pixbit(0,0,1,10,P1),
+pixbit(0,1,0,20,P2),
+pixbit(1,0,0,30,P3),
+pixbit(1,1,1,4,P4),
+image(2,2,[P1,P2,P3,P4],Img1),
+imageFlipH(Img1,R).
+```
+
+
+```
+pixhex(0,0,"0A0A0A",13,P1),
+pixhex(0,1,"141414",24,P2),
+pixhex(0,2,"0A0A0A",1,P3),
+pixhex(1,0,"1E1E1E",330,P4),
+pixhex(1,1,"282828",20,P5),
+pixhex(1,2,"1E1E1E",35,P6),
+pixhex(2,0,"1E1E1E",3,P7),
+pixhex(2,1,"1E1E1E",6,P8),
+pixhex(2,2,"1E1E1E",66,P9),
+image(3,3,[P1,P2,P3,P4,P5,P6,P7,P8,P9],Img6),
+imageToHistogram(Img6,R).
+```
+
+
+```
+pixrgb( 0, 0, 10, 10, 10, 10, P1), 
+pixrgb( 0, 1, 20, 20, 20, 20, P2), 
+pixrgb( 1, 0, 30, 30, 30, 30, P3), 
+pixrgb( 1, 1, 40, 40, 40, 40, P4), 
+image(2, 2, [P1, P2, P3, P4], I1), 
+imageInvertColorRGB(P2, P2_modificado), 
+imageChangePixel(I1, P2_modificado, I2).
+```
+
+```
+pixrgb(0,0,10,10,10,12,P1),
+pixrgb(0,1,20,20,20,21,P2),
+pixrgb(0,2,10,10,10,60,P3),
+pixrgb(0,3,10,10,10,40,P4),
+pixrgb(1,0,30,30,30,30,P5),
+pixrgb(1,1,40,40,40,20,P6),
+pixrgb(1,2,30,30,30,23,P7),
+pixrgb(1,3,30,30,30,11,P8),
+pixrgb(2,0,30,30,30,12,P9),
+pixrgb(2,1,30,30,30,21,P10),
+pixrgb(2,2,30,30,30,34,P11),
+pixrgb(2,3,30,30,30,44,P12),
+pixrgb(3,0,30,30,30,67,P13),
+pixrgb(3,1,30,30,30,31,P14),
+pixrgb(3,2,30,30,30,30,P15),
+pixrgb(3,3,30,30,30,30,P16),
+image(4,4,[P1,P2,P3,P4,P5,P6,P7,P8,P9,P10,P11,P12,P13,P14,P15,P16],Img4),
+imageToString(Img4, I).ˇ◊
+```
 
 
 ### Software
