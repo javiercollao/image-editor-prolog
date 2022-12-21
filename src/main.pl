@@ -779,7 +779,7 @@ imageInvertColorRGB(PixelRgbIn, PixelRgbOut):-
 %  ImageStr	  : String
 %  Predicados
 %  imageToString(ImageIn, ImageStr) aridad = 2
-%  Metas Primarias: imageInvertColorRGB
+%  Metas Primarias: imageToString
 %  Metas Secundarias: image, pixelsToString, atomic_list_concat,
 %  Clausulas
 
