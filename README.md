@@ -39,6 +39,14 @@ Por lo que podemos identificar algunas funcionalidades
 15. Separar capas de una imagen 3D en base a la profundidad. De esta forma desde una imagen 3D se puede devolver una lista de imágenes 2D
 16. Redimensionar imágen
 
+
+
+
+![](https://miro.medium.com/max/1306/1*I0I0QKbcXrvyI2usu-si_Q.webp)
+
+
+
+
 ### TDAs
 
 A partir del enenunciado se concluye que el programa contiene los siguientes TDAs:
