@@ -1,4 +1,4 @@
-## Laboratorio 2: Paradigma Lógico con Prolog
+## Desafío 2: Paradigma Lógico con Prolog
 
 ### Enunciado
 
@@ -45,7 +45,7 @@ A partir del enenunciado se concluye que el programa contiene los siguientes TDA
 
 1. TDA image, contiene todas las caractericas y funcionalidades de una imagen.
 2. TDA pixbit, contiene todas las caractericas y funcionalidades de una pixel tipo bit.
-3. TDA pixhex, contiene todas las caractericas y funcionalidades de una pixel tipo hexadecimal.
+3. TDA pixhex, contiene todas las caractericas y funcionalidades de una pixel tipo héxadecimal.
 4. TDA pixrgb, contiene todas las caractericas y funcionalidades de una pixel tipo RGB.
 
 ### Documentación

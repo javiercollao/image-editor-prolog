@@ -1186,5 +1186,3 @@ imageDecompress(ImageCompressedIn, ImageOut):-
     ),
 	mergePixels(Pixels,PixelsAuxOut, PixelsOut),
     image(Width, Height, PixelsOut, ImageOut).
-
-

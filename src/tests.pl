@@ -821,5 +821,3 @@ image(3,3,[P1,P2,P3,P4,P5,P6,P7,P8,P9],Img6),
 imageCompress(Img6, CImg6),
 imageDecompress(CImg6, I).
 
-
-
